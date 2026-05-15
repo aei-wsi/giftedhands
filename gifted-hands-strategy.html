@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gifted Hands — Strategic Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --cream: #faf7f2;
+    --warm-white: #f5f1ea;
+    --gold: #c9a84c;
+    --gold-light: #e8d08a;
+    --gold-dark: #9a7830;
+    --sienna: #8b4513;
+    --forest: #2d4a3e;
+    --forest-light: #3d6b5a;
+    --clay: #c4703a;
+    --muted: #7a7269;
+    --border: rgba(201, 168, 76, 0.25);
+    --border-strong: rgba(201, 168, 76, 0.5);
+    --card-bg: rgba(255,255,255,0.6);
+    --glass: rgba(250, 247, 242, 0.85);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ======= NAV ======= */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(15,14,13,0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 60px;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo span {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding-left: 12px;
+    border-left: 1px solid var(--border-strong);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(250,247,242,0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ======= HERO ======= */
+  .hero {
+    min-height: 100vh;
+    background: var(--ink);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 80px 80px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 65%);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(45,74,62,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 7vw, 96px);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--cream);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 300;
+    color: rgba(250,247,242,0.5);
+    margin-bottom: 48px;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta-item {
+    border-left: 2px solid var(--gold);
+    padding-left: 18px;
+  }
+
+  .hero-meta-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .hero-meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cream);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    animation: bounce 2s infinite;
+  }
+
+  .hero-scroll::after {
+    content: '↓';
+    font-size: 16px;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  .hero-tag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    border: 1px solid var(--border-strong);
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: rgba(250,247,242,0.7);
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ======= SECTIONS ======= */
+  .section {
+    padding: 100px 80px;
+    position: relative;
+  }
+
+  .section:nth-child(even) { background: var(--warm-white); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .section-label::before {
+    content: attr(data-num);
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 60px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--gold-dark);
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 640px;
+    margin-bottom: 56px;
+    font-weight: 300;
+  }
+
+  /* ======= EXEC SUMMARY ======= */
+  .exec-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .exec-lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .exec-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #4a4540;
+    margin-bottom: 24px;
+  }
+
+  .mandate-box {
+    background: var(--ink);
+    border-left: 3px solid var(--gold);
+    padding: 32px;
+    margin-top: 32px;
+  }
+
+  .mandate-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .mandate-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.4;
+  }
+
+  .exec-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .exec-stat {
+    border: 1px solid var(--border);
+    padding: 28px;
+    background: var(--card-bg);
+    position: relative;
+  }
+
+  .exec-stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+  }
+
+  .exec-stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--gold-dark);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .exec-stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ======= OPPORTUNITY ======= */
+  .opportunity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .opportunity-cell {
+    background: var(--cream);
+    padding: 36px 28px;
+    transition: background 0.3s;
+  }
+
+  .opportunity-cell:hover { background: var(--warm-white); }
+
+  .opp-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .opp-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .opp-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .gap-callout {
+    background: var(--ink);
+    padding: 48px 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .gap-callout-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+
+  .gap-callout-text em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .gap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .gap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    color: rgba(250,247,242,0.8);
+    font-size: 14px;
+  }
+
+  .gap-item::before {
+    content: '→';
+    color: var(--gold);
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ======= COMPETITOR CARDS ======= */
+  .competitor-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .competitor-card {
+    border: 1px solid var(--border);
+    background: white;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+
+  .competitor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+
+  .card-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .card-location {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .threat-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .threat-high { background: rgba(139,69,19,0.1); color: var(--sienna); border: 1px solid rgba(139,69,19,0.3); }
+  .threat-med { background: rgba(201,168,76,0.12); color: var(--gold-dark); border: 1px solid var(--border-strong); }
+  .threat-low { background: rgba(45,74,62,0.1); color: var(--forest); border: 1px solid rgba(45,74,62,0.3); }
+
+  .card-body {
+    padding: 24px 28px;
+  }
+
+  .sw-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .sw-col h5 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .sw-col.strengths h5 { color: var(--forest); }
+  .sw-col.weaknesses h5 { color: var(--sienna); }
+
+  .sw-item {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .sw-item span { flex: 1; }
+
+  .diff-section {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-top: 4px;
+  }
+
+  .diff-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 8px;
+  }
+
+  .diff-text {
+    font-size: 12px;
+    color: #5a5048;
+    line-height: 1.55;
+  }
+
+  /* ======= MATRIX ======= */
+  .matrix-wrap {
+    overflow-x: auto;
+  }
+
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .matrix thead tr {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .matrix thead th {
+    padding: 16px 20px;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none;
+  }
+
+  .matrix thead th:first-child {
+    color: var(--gold);
+  }
+
+  .matrix tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .matrix tbody tr:hover { background: rgba(201,168,76,0.04); }
+
+  .matrix tbody tr.gifted-row {
+    background: rgba(201,168,76,0.08);
+  }
+
+  .matrix tbody tr.gifted-row td {
+    font-weight: 500;
+  }
+
+  .matrix td {
+    padding: 16px 20px;
+    vertical-align: top;
+    color: var(--ink);
+  }
+
+  .matrix td:first-child {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .dot-full { color: var(--gold); font-size: 14px; }
+  .dot-half { color: var(--muted); font-size: 14px; }
+
+  .matrix-dot {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .score-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  .pill-high { background: rgba(139,69,19,0.12); color: var(--sienna); }
+  .pill-med { background: rgba(201,168,76,0.15); color: var(--gold-dark); }
+  .pill-low { background: rgba(45,74,62,0.12); color: var(--forest); }
+  .pill-star { background: var(--gold); color: var(--ink); font-weight: 600; }
+
+  /* ======= DIFFERENTIATORS ======= */
+  .diff-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .pillar {
+    background: var(--ink);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pillar::before {
+    content: attr(data-n);
+    position: absolute;
+    top: -10px; right: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 100px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .pillar-icon {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  .pillar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+  }
+
+  .pillar-body {
+    font-size: 13px;
+    color: rgba(250,247,242,0.65);
+    line-height: 1.7;
+  }
+
+  .pillar-bar {
+    margin-top: 20px;
+    height: 2px;
+    background: rgba(201,168,76,0.15);
+    position: relative;
+  }
+
+  .pillar-bar-fill {
+    height: 100%;
+    background: var(--gold);
+  }
+
+  /* ======= RISKS ======= */
+  .risks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .risk-card {
+    border: 1px solid var(--border);
+    padding: 28px;
+    background: white;
+  }
+
+  .risk-level {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  .risk-critical { background: rgba(139,69,19,0.1); color: var(--sienna); }
+  .risk-high { background: rgba(196,112,58,0.12); color: var(--clay); }
+  .risk-medium { background: rgba(201,168,76,0.12); color: var(--gold-dark); }
+
+  .risk-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .risk-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 14px;
+  }
+
+  .risk-mitigation {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    font-size: 12px;
+    color: var(--forest-light);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .risk-mitigation::before {
+    content: '⤷';
+    flex-shrink: 0;
+  }
+
+  /* ======= ROADMAP ======= */
+  .roadmap-track {
+    position: relative;
+    padding: 40px 0;
+  }
+
+  .roadmap-line {
+    position: absolute;
+    top: 60px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .roadmap-line-fill {
+    height: 100%;
+    width: 20%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  }
+
+  .phases-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    position: relative;
+  }
+
+  .phase-card {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 0;
+    position: relative;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .phase-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+  }
+
+  .phase-card.active {
+    border-color: var(--gold);
+  }
+
+  .phase-num {
+    background: var(--ink);
+    padding: 20px;
+    text-align: center;
+  }
+
+  .phase-card.active .phase-num {
+    background: var(--gold);
+  }
+
+  .phase-num-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1;
+  }
+
+  .phase-card.active .phase-num-text {
+    color: var(--ink);
+  }
+
+  .phase-num-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .phase-card.active .phase-num-label {
+    color: rgba(15,14,13,0.6);
+  }
+
+  .phase-content {
+    padding: 20px;
+  }
+
+  .phase-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .phase-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .phase-items li {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .phase-items li::before {
+    content: '·';
+    color: var(--gold);
+    font-size: 16px;
+    line-height: 1.1;
+    flex-shrink: 0;
+  }
+
+  /* ======= VISION ======= */
+  .vision-hero {
+    background: var(--ink);
+    padding: 72px 64px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .vision-hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .vision-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.5;
+    max-width: 700px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 24px;
+  }
+
+  .vision-quote em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .vision-attribution {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .vision-layers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .layer-card {
+    border: 1px solid var(--border);
+    padding: 32px;
+    background: white;
+    position: relative;
+  }
+
+  .layer-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    opacity: 0.25;
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    line-height: 1;
+  }
+
+  .layer-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .layer-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ======= REVENUE ======= */
+  .revenue-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .rev-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 80px;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .rev-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .rev-bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .rev-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    transition: width 1s ease;
+  }
+
+  .rev-potential {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .rev-card {
+    border: 1px solid var(--border);
+    padding: 28px;
+    background: white;
+  }
+
+  .rev-card-icon { font-size: 24px; margin-bottom: 14px; }
+
+  .rev-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .rev-card-body {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .rev-card-tag {
+    margin-top: 14px;
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest);
+    background: rgba(45,74,62,0.08);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* ======= RECOMMENDATIONS ======= */
+  .recs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .rec-item {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .rec-item:last-child { border-bottom: none; }
+  .rec-item:hover { background: rgba(201,168,76,0.03); }
+
+  .rec-num {
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .rec-content {
+    padding: 28px 32px;
+  }
+
+  .rec-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .rec-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .rec-priority {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  /* ======= FOOTER ======= */
+  footer {
+    background: var(--ink);
+    padding: 56px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--cream);
+  }
+
+  .footer-logo em { font-style: italic; color: var(--gold); }
+
+  .footer-meta {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ======= TABS ======= */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .tab-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--gold-dark); border-bottom-color: var(--gold); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ======= ANIMATIONS ======= */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-in {
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .section { padding: 60px 24px; }
+    .exec-grid { grid-template-columns: 1fr; }
+    .opportunity-grid { grid-template-columns: 1fr 1fr; }
+    .competitor-grid { grid-template-columns: 1fr; }
+    .diff-pillars { grid-template-columns: 1fr; }
+    .risks-grid { grid-template-columns: 1fr; }
+    .phases-row { grid-template-columns: 1fr 1fr; }
+    .vision-layers { grid-template-columns: 1fr; }
+    .revenue-grid { grid-template-columns: 1fr; }
+    .revenue-bars .rev-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-meta { text-align: center; }
+    .gap-callout { grid-template-columns: 1fr; }
+    .hero-meta { flex-wrap: wrap; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    Gifted Hands
+    <span>Strategy Report 2024</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#exec-summary">Overview</a></li>
+    <li><a href="#market">Market</a></li>
+    <li><a href="#competitors">Competitors</a></li>
+    <li><a href="#differentiators">Strategy</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#revenue">Revenue</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Competitive Intelligence & Strategic Positioning</div>
+  <h1 class="hero-title">
+    Gifted<br><em>Hands</em>
+  </h1>
+  <p class="hero-subtitle">From sensory-safe grooming to an inclusive experience platform</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Founders</div>
+      <div class="hero-meta-value">Azaniah Israel & Richmond Lewis</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Classification</div>
+      <div class="hero-meta-value">Confidential Strategic Report</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Market Phase</div>
+      <div class="hero-meta-value">Pre-Launch / Validation</div>
+    </div>
+  </div>
+  <div class="hero-tag-grid">
+    <div class="hero-tag">Sensory-Safe Grooming</div>
+    <div class="hero-tag">Inclusive Wellness</div>
+    <div class="hero-tag">Neurodivergent Families</div>
+    <div class="hero-tag">Experience Design</div>
+    <div class="hero-tag">Scalable Systems</div>
+    <div class="hero-tag">Training & Certification</div>
+    <div class="hero-tag">Community Ecosystem</div>
+  </div>
+  <div class="hero-scroll">Scroll to explore</div>
+</section>
+
+<!-- 1. EXEC SUMMARY -->
+<section class="section" id="exec-summary">
+  <div class="section-label" data-num="01">Executive Summary</div>
+  <h2 class="section-title">A fragmented market.<br><em>A singular opportunity.</em></h2>
+
+  <div class="exec-grid">
+    <div>
+      <p class="exec-lead">Gifted Hands is entering an emerging, underserved market category where no dominant national brand yet exists — and where the need is both urgent and deeply personal for the families it will serve.</p>
+
+      <p class="exec-body">The intersection of sensory-supportive grooming, inclusive wellness experiences, neurodivergent family support, and experience-based service environments represents one of the most underbuilt markets in the modern service economy. Families with neurodivergent members routinely report that basic grooming is not a routine errand — it is a significant stressor. The absence of safe, dignified, trust-centered environments is not a niche gap; it is a systemic failure the market has yet to solve at scale.</p>
+
+      <p class="exec-body">Gifted Hands is positioned to bridge all four emerging market categories simultaneously — a feat no current competitor appears capable of executing. The business concept inherently carries the architecture of a platform, not merely a salon.</p>
+
+      <div class="mandate-box">
+        <div class="mandate-label">Strategic Mandate</div>
+        <div class="mandate-text">"Build the operating system before building the empire."</div>
+      </div>
+    </div>
+
+    <div class="exec-sidebar">
+      <div class="exec-stat">
+        <div class="exec-stat-num">4</div>
+        <div class="exec-stat-label">Market categories Gifted Hands is positioned to bridge simultaneously</div>
+      </div>
+      <div class="exec-stat">
+        <div class="exec-stat-num">0</div>
+        <div class="exec-stat-label">Dominant national brands owning the full sensory-inclusive ecosystem space</div>
+      </div>
+      <div class="exec-stat">
+        <div class="exec-stat-num">5</div>
+        <div class="exec-stat-label">Phased growth stages from pilot validation to national scale</div>
+      </div>
+      <div class="exec-stat">
+        <div class="exec-stat-num">7+</div>
+        <div class="exec-stat-label">Identified revenue streams across services, memberships, licensing & training</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. MARKET OPPORTUNITY -->
+<section class="section" id="market" style="background: var(--warm-white);">
+  <div class="section-label" data-num="02">Market Opportunity</div>
+  <h2 class="section-title">Four categories.<br><em>One unoccupied intersection.</em></h2>
+  <p class="section-subtitle">The market is fragmented across distinct verticals with no single operator commanding the full ecosystem.</p>
+
+  <div class="opportunity-grid">
+    <div class="opportunity-cell">
+      <div class="opp-icon">✂️</div>
+      <div class="opp-title">Sensory-Friendly Salons</div>
+      <div class="opp-body">Specialized haircut and salon accommodations designed for neurodivergent clients. High emotional need, currently fragmented regionally with no national leader.</div>
+    </div>
+    <div class="opportunity-cell">
+      <div class="opp-icon">🌟</div>
+      <div class="opp-title">Kid & Family Experience Salons</div>
+      <div class="opp-body">Entertainment-focused service environments where the journey is part of the product. Proven demand but rarely combined with genuine sensory expertise.</div>
+    </div>
+    <div class="opportunity-cell">
+      <div class="opp-icon">📋</div>
+      <div class="opp-title">Training & Certification Models</div>
+      <div class="opp-body">Sensory-safe operational education systems for practitioners and businesses. Highly scalable IP play — currently only one known operator in this lane.</div>
+    </div>
+    <div class="opportunity-cell">
+      <div class="opp-icon">🤝</div>
+      <div class="opp-title">Inclusive Wellness Centers</div>
+      <div class="opp-body">Community-centered support environments integrating health, belonging, and care. Mission-aligned with strong institutional and grant funding potential.</div>
+    </div>
+  </div>
+
+  <div class="gap-callout">
+    <div class="gap-callout-text">
+      The market currently <em>lacks a dominant national brand</em> that combines all five pillars of the Gifted Hands vision under one operating model.
+    </div>
+    <div class="gap-list">
+      <div class="gap-item">Sensory-safe grooming with clinical credibility</div>
+      <div class="gap-item">Immersive, hospitality-grade customer experience</div>
+      <div class="gap-item">Scalable, documented operational systems</div>
+      <div class="gap-item">Professional training & certification infrastructure</div>
+      <div class="gap-item">Community ecosystem & membership architecture</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. COMPETITIVE LANDSCAPE -->
+<section class="section" id="competitors">
+  <div class="section-label" data-num="03">Competitive Landscape</div>
+  <h2 class="section-title">Seven competitors.<br><em>Seven validated signals.</em></h2>
+  <p class="section-subtitle">Each competitor proves demand in a specific lane — and reveals where the market remains underbuilt.</p>
+
+  <div class="competitor-grid">
+
+    <!-- Hope Haircuts -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Hope Haircuts</div>
+          <div class="card-location">📍 Phoenix, Arizona</div>
+        </div>
+        <span class="threat-badge threat-med">Medium Threat</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Emotionally resonant branding</span></div>
+            <div class="sw-item"><span>Strong parent trust & loyalty</span></div>
+            <div class="sw-item"><span>Clear neurodivergent niche positioning</span></div>
+            <div class="sw-item"><span>Authentic caregiver-centered experience</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Appears founder/operator dependent</span></div>
+            <div class="sw-item"><span>No visible franchise or licensing structure</span></div>
+            <div class="sw-item"><span>Limited scalability systems</span></div>
+            <div class="sw-item"><span>Primarily salon-focused only</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">Hope Haircuts validates that parents actively seek sensory-safe grooming and that emotional trust creates loyalty. Gifted Hands can out-execute through scalable systems, membership architecture, workshops, operational protocols, and training/certification infrastructure that transforms a single location into an enterprise platform.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sensory Cuts -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Sensory Cuts</div>
+          <div class="card-location">📍 Methodology/Program Based</div>
+        </div>
+        <span class="threat-badge threat-low">Low–Medium</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Sensory adaptation methodology focus</span></div>
+            <div class="sw-item"><span>Service workflow emphasis</span></div>
+            <div class="sw-item"><span>Practical operational accommodations</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Limited emotional branding depth</span></div>
+            <div class="sw-item"><span>Not an immersive experience</span></div>
+            <div class="sw-item"><span>No visible community ecosystem</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">Sensory Cuts validates that operational sensory protocols are valuable IP. Gifted Hands can differentiate through emotional branding, immersive environments, family engagement programming, and hospitality-driven experiences that go far beyond workflow checklists.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sensory Safe Solution -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">The Sensory Safe Solution</div>
+          <div class="card-location">📍 Florida</div>
+        </div>
+        <span class="threat-badge threat-high">HIGH THREAT</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Certification infrastructure</span></div>
+            <div class="sw-item"><span>Professional training systems</span></div>
+            <div class="sw-item"><span>Scalable educational/IP model</span></div>
+            <div class="sw-item"><span>Strong practitioner credibility</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>No immersive consumer experience</span></div>
+            <div class="sw-item"><span>Primarily training-focused only</span></div>
+            <div class="sw-item"><span>Limited consumer-facing ecosystem</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">This is the strongest long-term strategic comparison — a training-and-certification IP model. Gifted Hands can differentiate through real-world implementation proof, immersive customer environments, operational data collected from live locations, and the emotional family trust no training-only org can replicate.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strong Beginnings -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Strong Beginnings Project</div>
+          <div class="card-location">📍 Texas</div>
+        </div>
+        <span class="threat-badge threat-low">Low Threat</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Community-first approach</span></div>
+            <div class="sw-item"><span>Partnership-based model</span></div>
+            <div class="sw-item"><span>Strong local trust building</span></div>
+            <div class="sw-item"><span>Mission alignment</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Initiative-based, not enterprise infrastructure</span></div>
+            <div class="sw-item"><span>Less operational scalability</span></div>
+            <div class="sw-item"><span>Limited ecosystem development</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">Validates the community partnership model and pop-up activation approach — both relevant to Gifted Hands' Phase 2 strategy. Gifted Hands outperforms through documented systems, scalable branding, operational consistency, and a clear path from community initiative to enterprise.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Snip-its -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Snip-its</div>
+          <div class="card-location">📍 National Franchise</div>
+        </div>
+        <span class="threat-badge threat-med">Medium Threat</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Proven franchise systems</span></div>
+            <div class="sw-item"><span>Family experience environment</span></div>
+            <div class="sw-item"><span>Operational consistency at scale</span></div>
+            <div class="sw-item"><span>National brand recognition</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Generalized positioning — not specialist</span></div>
+            <div class="sw-item"><span>Entertainment-driven, not accommodation-driven</span></div>
+            <div class="sw-item"><span>Limited deep sensory expertise</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">Snip-its validates that families place high value on experience, that environment drives loyalty, and that salons can become experiential ecosystems. Gifted Hands claims the premium specialist position: deeper sensory expertise, neurodivergent-first design, and emotional caregiver trust that a generalist brand cannot credibly own.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pigtails & Crewcuts -->
+    <div class="competitor-card">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Pigtails & Crewcuts</div>
+          <div class="card-location">📍 Multi-Location Franchise</div>
+        </div>
+        <span class="threat-badge threat-med">Medium Threat</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Established operational systems</span></div>
+            <div class="sw-item"><span>Family-centered branding</span></div>
+            <div class="sw-item"><span>Multi-location experience</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Broad positioning, limited depth</span></div>
+            <div class="sw-item"><span>Surface-level sensory accommodations</span></div>
+            <div class="sw-item"><span>Not built for neurodivergent-first experience</span></div>
+          </div>
+        </div>
+        <div class="diff-section">
+          <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+          <div class="diff-text">Validates mainstream demand for sensory accommodations — but reveals that most salons stop short of true specialization. Gifted Hands positions as the premium specialized alternative: not a child-friendly salon with accommodations, but a neurodivergent-first platform that incidentally serves all families.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Morgan's Salon -->
+    <div class="competitor-card" style="grid-column: span 2;">
+      <div class="card-header">
+        <div>
+          <div class="card-name">Morgan's Salon</div>
+          <div class="card-location">📍 San Antonio, Texas — within Morgan's Multi-Assistance Center</div>
+        </div>
+        <span class="threat-badge threat-med">Medium Threat</span>
+      </div>
+      <div class="card-body">
+        <div class="sw-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="sw-col strengths">
+            <h5>Strengths</h5>
+            <div class="sw-item"><span>Institutional credibility & backing</span></div>
+            <div class="sw-item"><span>Inclusive community trust</span></div>
+            <div class="sw-item"><span>Texas-based proof point (same market)</span></div>
+            <div class="sw-item"><span>Strong mission integration</span></div>
+          </div>
+          <div class="sw-col weaknesses">
+            <h5>Weaknesses</h5>
+            <div class="sw-item"><span>Less visibly scalable</span></div>
+            <div class="sw-item"><span>Service/community-oriented, not enterprise-focused</span></div>
+            <div class="sw-item"><span>Limited ecosystem expansion</span></div>
+          </div>
+          <div class="diff-section" style="margin: 0; align-self: start;">
+            <div class="diff-label">Gifted Hands Differentiation Opportunity</div>
+            <div class="diff-text">Morgan's Salon validates that inclusive environments work in the Texas market, that institutions actively support these models, and that families seek safe, mission-aligned spaces. A critical geographic proof point. Gifted Hands can outperform through stronger commercial branding, scalable operational systems, membership architecture, and a training/certification model that Morgan's does not offer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 4. COMPARISON MATRIX -->
+<section class="section" id="matrix" style="background: var(--warm-white);">
+  <div class="section-label" data-num="04">Competitor Comparison Matrix</div>
+  <h2 class="section-title">How the market<br><em>actually stacks up.</em></h2>
+  <p class="section-subtitle">Capability ratings across the five dimensions that define the full Gifted Hands vision.</p>
+
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th>Operator</th>
+          <th>Sensory Expertise</th>
+          <th>Experience Design</th>
+          <th>Operational Systems</th>
+          <th>Training / IP</th>
+          <th>Community Ecosystem</th>
+          <th>Threat Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="gifted-row">
+          <td>✦ Gifted Hands <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold); display:block; font-weight:400">TARGET POSITION</span></td>
+          <td><span class="score-pill pill-star">★★★★★</span></td>
+          <td><span class="score-pill pill-star">★★★★★</span></td>
+          <td><span class="score-pill pill-star">★★★★★</span></td>
+          <td><span class="score-pill pill-star">★★★★★</span></td>
+          <td><span class="score-pill pill-star">★★★★★</span></td>
+          <td><span class="score-pill" style="background:var(--gold);color:var(--ink);font-weight:600">CATEGORY CREATOR</span></td>
+        </tr>
+        <tr>
+          <td>Hope Haircuts</td>
+          <td>★★★★☆</td>
+          <td>★★★☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★☆☆☆☆</td>
+          <td>★★☆☆☆</td>
+          <td><span class="score-pill pill-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Sensory Cuts</td>
+          <td>★★★☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★★☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★☆☆☆☆</td>
+          <td><span class="score-pill pill-low">Low–Med</span></td>
+        </tr>
+        <tr>
+          <td>Sensory Safe Solution</td>
+          <td>★★★★☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+          <td>★★★★★</td>
+          <td>★★☆☆☆</td>
+          <td><span class="score-pill pill-high">HIGH</span></td>
+        </tr>
+        <tr>
+          <td>Strong Beginnings</td>
+          <td>★★★☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★☆☆☆☆</td>
+          <td>★★★★☆</td>
+          <td><span class="score-pill pill-low">Low</span></td>
+        </tr>
+        <tr>
+          <td>Snip-its</td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+          <td>★★★★★</td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+          <td><span class="score-pill pill-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Pigtails & Crewcuts</td>
+          <td>★★☆☆☆</td>
+          <td>★★★☆☆</td>
+          <td>★★★★☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★☆☆☆</td>
+          <td><span class="score-pill pill-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>Morgan's Salon</td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+          <td><span class="score-pill pill-med">Medium</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px; padding: 16px 20px; border: 1px solid var(--border); background: white; display: flex; gap: 32px; align-items: center; flex-wrap: wrap;">
+    <span style="font-family:'DM Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted);">Rating Scale</span>
+    <span style="font-size:13px; color:var(--muted);">★☆☆☆☆ Minimal  ·  ★★★☆☆ Moderate  ·  ★★★★★ Dominant</span>
+    <span style="font-family:'DM Mono',monospace; font-size:10px; color:var(--gold-dark);">✦ Gifted Hands target position represents full-vision execution at scale</span>
+  </div>
+</section>
+
+<!-- 5. STRATEGIC DIFFERENTIATORS -->
+<section class="section" id="differentiators">
+  <div class="section-label" data-num="05">Strategic Differentiators</div>
+  <h2 class="section-title">Five pillars.<br><em>One defensible moat.</em></h2>
+  <p class="section-subtitle">The competitive advantage is not any single feature — it is the integration of all five dimensions in a single operating model.</p>
+
+  <div class="diff-pillars">
+    <div class="pillar" data-n="01">
+      <div class="pillar-icon">🧠</div>
+      <div class="pillar-title">Neurodivergent-First Design</div>
+      <div class="pillar-body">Every aspect of the Gifted Hands environment — from lighting and acoustics to intake protocols and service sequencing — is designed for neurodivergent individuals as the primary user, not as an accommodation afterthought. This creates genuine expertise competitors cannot easily replicate.</div>
+      <div class="pillar-bar"><div class="pillar-bar-fill" style="width:95%"></div></div>
+    </div>
+    <div class="pillar" data-n="02">
+      <div class="pillar-icon">🏛️</div>
+      <div class="pillar-title">Immersive Experience Architecture</div>
+      <div class="pillar-body">Gifted Hands is positioned as an experience platform, not a salon. The environment, programming, and service delivery are designed to create emotional memories — transforming first-time clients into lifetime community members through hospitality-grade experiential design.</div>
+      <div class="pillar-bar"><div class="pillar-bar-fill" style="width:90%"></div></div>
+    </div>
+    <div class="pillar" data-n="03">
+      <div class="pillar-icon">⚙️</div>
+      <div class="pillar-title">Documented Operational Systems</div>
+      <div class="pillar-body">Proprietary intake protocols, service workflows, sensory accommodation frameworks, and caregiver communication systems create scalable IP — the foundation for future licensing, franchising, and training programs. Operations are built to replicate from day one.</div>
+      <div class="pillar-bar"><div class="pillar-bar-fill" style="width:88%"></div></div>
+    </div>
+    <div class="pillar" data-n="04">
+      <div class="pillar-icon">🎓</div>
+      <div class="pillar-title">Training & Certification Engine</div>
+      <div class="pillar-body">The long-term enterprise value of Gifted Hands may be its ability to certify and license its methodology to other practitioners and facilities — transforming operational experience into scalable educational IP. Real-world implementation provides credibility no training-only competitor can match.</div>
+      <div class="pillar-bar"><div class="pillar-bar-fill" style="width:80%"></div></div>
+    </div>
+    <div class="pillar" data-n="05">
+      <div class="pillar-icon">🌱</div>
+      <div class="pillar-title">Community Ecosystem & Belonging</div>
+      <div class="pillar-body">Memberships, workshops, life-skills programming, and community events transform Gifted Hands from a service provider into a gathering place — a space families return to not just for grooming, but for connection, support, and belonging. This emotional moat is the hardest competitive advantage to replicate.</div>
+      <div class="pillar-bar"><div class="pillar-bar-fill" style="width:92%"></div></div>
+    </div>
+  </div>
+
+  <div style="background: var(--warm-white); border: 1px solid var(--border); padding: 40px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:400; margin-bottom:16px; line-height:1.4;">The Premium Specialist Position</div>
+      <p style="font-size:14px; color:var(--muted); line-height:1.7;">In every market category — sensory salons, kid franchise salons, and community wellness centers — existing competitors have validated demand without claiming the premium specialist position. That position is currently unoccupied at a national level.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; gap:16px; align-items:flex-start; padding:14px; background:white; border:1px solid var(--border);">
+        <div style="font-size:20px; flex-shrink:0;">🎯</div>
+        <div style="font-size:13px; color:var(--muted);">Not a generalist salon with accommodations — a <strong>neurodivergent-first platform</strong> that serves all families</div>
+      </div>
+      <div style="display:flex; gap:16px; align-items:flex-start; padding:14px; background:white; border:1px solid var(--border);">
+        <div style="font-size:20px; flex-shrink:0;">🔒</div>
+        <div style="font-size:13px; color:var(--muted);">Emotional trust with caregivers is the <strong>hardest competitive advantage</strong> to replicate</div>
+      </div>
+      <div style="display:flex; gap:16px; align-items:flex-start; padding:14px; background:white; border:1px solid var(--border);">
+        <div style="font-size:20px; flex-shrink:0;">📈</div>
+        <div style="font-size:13px; color:var(--muted);">Texas market validated by Morgan's Salon — <strong>local proof of concept</strong> already exists</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. RISKS -->
+<section class="section" id="risks" style="background: var(--warm-white);">
+  <div class="section-label" data-num="06">Risks & Challenges</div>
+  <h2 class="section-title">Honest risks.<br><em>Honest mitigations.</em></h2>
+  <p class="section-subtitle">The greatest risk is not competition — it is attempting to build the full vision before the operating foundation is proven.</p>
+
+  <div class="risks-grid">
+    <div class="risk-card">
+      <span class="risk-level risk-critical">Critical Risk</span>
+      <div class="risk-title">Premature Scale</div>
+      <div class="risk-body">Attempting to build the full ecosystem — memberships, workshops, training programs, content studio, certification — before the core service model is validated and documented. Execution complexity at full vision is extraordinarily high.</div>
+      <div class="risk-mitigation">Strict phased rollout. Each phase gates the next. Phase 1 and 2 must complete before Phase 3 resources are committed.</div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-level risk-high">High Risk</span>
+      <div class="risk-title">Operational Complexity</div>
+      <div class="risk-body">Sensory-safe service environments require specialized practitioner training, environment design, intake systems, and caregiver communication protocols that are more demanding than standard salon operations.</div>
+      <div class="risk-mitigation">Build and document systems before scale. Pilot programs surface operational failures before they become expensive at a flagship location.</div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-level risk-high">High Risk</span>
+      <div class="risk-title">Trust Acquisition</div>
+      <div class="risk-body">Caregivers of neurodivergent family members are highly selective with trust. A single negative experience can generate significant community backlash in a word-of-mouth-driven niche audience. Trust is slow to build and fast to lose.</div>
+      <div class="risk-mitigation">Relationship-first launch strategy. Partner with existing community organizations before opening independently. Let trust precede commerce.</div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-level risk-medium">Medium Risk</span>
+      <div class="risk-title">Competitive Imitation</div>
+      <div class="risk-body">As the market grows, established franchises (Snip-its, Pigtails & Crewcuts) may deepen sensory accommodations, reducing the perceived differentiation of Gifted Hands if the brand equity is not built early and strong.</div>
+      <div class="risk-mitigation">Build defensible IP (certification, systems, brand) before large franchises recognize the segment. First-mover advantage in the specialist lane is the primary moat.</div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-level risk-medium">Medium Risk</span>
+      <div class="risk-title">Founder Dependency</div>
+      <div class="risk-body">Most competitors in this space appear highly dependent on their founding operators. Gifted Hands must be intentional about building systems, brand, and culture that are larger than any individual — especially critical for franchise and licensing paths.</div>
+      <div class="risk-mitigation">Document every protocol. Build brand identity distinct from personal brand. Training materials and operational playbooks are the business, not the founders.</div>
+    </div>
+
+    <div class="risk-card">
+      <span class="risk-level risk-medium">Medium Risk</span>
+      <div class="risk-title">Market Education Burden</div>
+      <div class="risk-body">The concept of a sensory-inclusive experience platform is still emerging. Some caregivers, community partners, and potential investors may not immediately understand or trust the category — requiring investment in education before sales.</div>
+      <div class="risk-mitigation">Lead with emotional storytelling and specific family outcomes. Quantify the problem clearly. Speak to caregivers in their language before speaking to investors in financial terms.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. ROADMAP -->
+<section class="section" id="roadmap">
+  <div class="section-label" data-num="07">Startup Phasing Roadmap</div>
+  <h2 class="section-title">Five phases.<br><em>One deliberate path.</em></h2>
+  <p class="section-subtitle">Each phase gates the next. Proof before scale. Systems before expansion. Trust before enterprise.</p>
+
+  <div class="roadmap-track">
+    <div class="roadmap-line">
+      <div class="roadmap-line-fill"></div>
+    </div>
+    <div class="phases-row">
+
+      <div class="phase-card active">
+        <div class="phase-num">
+          <div class="phase-num-text">01</div>
+          <div class="phase-num-label">Current Phase</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-title">Discovery & Validation</div>
+          <ul class="phase-items">
+            <li>In-depth customer interviews with caregivers</li>
+            <li>Deep competitor research & mystery shopping</li>
+            <li>Pilot event concept design</li>
+            <li>Partnership exploration with community orgs</li>
+            <li>Brand positioning foundation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-num">
+          <div class="phase-num-text">02</div>
+          <div class="phase-num-label">Pilot Program</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-title">Pop-Up Activation</div>
+          <ul class="phase-items">
+            <li>Sensory-friendly pop-up experiences</li>
+            <li>Hosted in partner facilities</li>
+            <li>Operational workflow testing</li>
+            <li>Intake & accommodation system testing</li>
+            <li>Community trust building</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-num">
+          <div class="phase-num-text">03</div>
+          <div class="phase-num-label">Pilot Studio</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-title">Flagship Studio</div>
+          <ul class="phase-items">
+            <li>Small leased flagship location</li>
+            <li>Appointment-first operations</li>
+            <li>Membership model testing</li>
+            <li>Full workflow refinement</li>
+            <li>Operational documentation</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-num">
+          <div class="phase-num-text">04</div>
+          <div class="phase-num-label">Experience Lounge</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-title">Full Experience</div>
+          <ul class="phase-items">
+            <li>Expanded flagship facility</li>
+            <li>Workshops & programming</li>
+            <li>Content studio activation</li>
+            <li>Full community ecosystem</li>
+            <li>Membership tiers live</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-num">
+          <div class="phase-num-text">05</div>
+          <div class="phase-num-label">Scale</div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-title">Enterprise Scale</div>
+          <ul class="phase-items">
+            <li>Certification & licensing launch</li>
+            <li>Additional locations</li>
+            <li>Strategic partnerships</li>
+            <li>Franchise exploration</li>
+            <li>Institutional investment raise</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-top:40px; padding:32px 40px; background:var(--ink); border-left:3px solid var(--gold);">
+    <div style="font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Phasing Philosophy</div>
+    <p style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:300; color:var(--cream); line-height:1.55;">Validate demand. Refine workflows. Build trust. Document systems. Scale gradually. Each phase is not merely a timeline milestone — it is a proof gate. The business earns the right to the next phase by executing the current one with discipline.</p>
+  </div>
+</section>
+
+<!-- 8. LONG-TERM VISION -->
+<section class="section" id="vision" style="background: var(--warm-white);">
+  <div class="section-label" data-num="08">Long-Term Vision</div>
+  <h2 class="section-title">Not a salon.<br><em>An inclusive experience platform.</em></h2>
+
+  <div class="vision-hero">
+    <div class="vision-quote">
+      "Gifted Hands may ultimately become <em>the operating system for inclusive sensory care</em> — a platform that trains, certifies, licenses, and inspires a new generation of practitioners across the country."
+    </div>
+    <div class="vision-attribution">Strategic Long-Term Vision Statement · Gifted Hands</div>
+  </div>
+
+  <div class="vision-layers">
+    <div class="layer-card">
+      <div class="layer-num">I</div>
+      <div class="layer-title">Community Flagship</div>
+      <div class="layer-body">The physical embodiment of the brand — a premium, sensory-safe, immersive environment that becomes the community anchor for neurodivergent families. A destination, not merely a service location.</div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-num">II</div>
+      <div class="layer-title">Membership Ecosystem</div>
+      <div class="layer-body">Recurring revenue through tiered memberships that provide predictable access to services, workshops, life-skills programming, community events, and priority scheduling — deepening family loyalty and generating stable revenue.</div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-num">III</div>
+      <div class="layer-title">Practitioner Education</div>
+      <div class="layer-body">A certification and licensing arm that trains stylists, wellness providers, and facility operators in Gifted Hands methodology — scaling the brand's impact without the capital requirement of physical expansion.</div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-num">IV</div>
+      <div class="layer-title">Content & Media Layer</div>
+      <div class="layer-body">Educational content, caregiver resources, and community media that build authority, attract partners, drive SEO, and position Gifted Hands as the definitive voice in sensory-inclusive service excellence.</div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-num">V</div>
+      <div class="layer-title">Institutional Partnerships</div>
+      <div class="layer-body">Collaborations with healthcare systems, school districts, disability organizations, nonprofit foundations, and government agencies that validate the model, expand reach, and open grant and institutional revenue channels.</div>
+    </div>
+    <div class="layer-card">
+      <div class="layer-num">VI</div>
+      <div class="layer-title">Multi-Market Expansion</div>
+      <div class="layer-body">Proven systems, documented operations, and certified practitioners enable franchise licensing or company-owned expansion to additional markets — with a replication model far more defensible than any physical buildout alone.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. REVENUE STREAMS -->
+<section class="section" id="revenue">
+  <div class="section-label" data-num="09">Revenue Architecture</div>
+  <h2 class="section-title">Multiple revenue layers.<br><em>Increasing enterprise value.</em></h2>
+  <p class="section-subtitle">Gifted Hands is architected to diversify beyond single-service revenue from day one — with each phase unlocking a new revenue layer.</p>
+
+  <div class="revenue-bars" style="margin-bottom:48px;">
+    <div class="rev-row">
+      <div class="rev-label">Grooming & Service Revenue</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:100%"></div></div>
+      <div class="rev-potential">Phase 2+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Membership Subscriptions</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:85%"></div></div>
+      <div class="rev-potential">Phase 3+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Workshops & Programming</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:70%"></div></div>
+      <div class="rev-potential">Phase 4+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Training & Certification</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:90%"></div></div>
+      <div class="rev-potential">Phase 5+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Licensing & Franchise Fees</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:95%"></div></div>
+      <div class="rev-potential">Phase 5+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Institutional & Grant Revenue</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:60%"></div></div>
+      <div class="rev-potential">Phase 3+</div>
+    </div>
+    <div class="rev-row">
+      <div class="rev-label">Content & Media Monetization</div>
+      <div class="rev-bar-track"><div class="rev-bar-fill" style="width:50%"></div></div>
+      <div class="rev-potential">Phase 4+</div>
+    </div>
+  </div>
+
+  <div class="revenue-grid">
+    <div class="rev-card">
+      <div class="rev-card-icon">✂️</div>
+      <div class="rev-card-title">Core Services</div>
+      <div class="rev-card-body">Sensory-safe grooming appointments at premium pricing, justified by specialized expertise, trained practitioners, and intentional environment design. Appointment-first model maintains quality and manages capacity.</div>
+      <span class="rev-card-tag">Immediate Revenue</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-card-icon">🔄</div>
+      <div class="rev-card-title">Membership Tiers</div>
+      <div class="rev-card-body">Monthly or annual membership plans offering priority access, bundled service credits, workshop inclusion, and community events — creating predictable recurring revenue and deepening family loyalty.</div>
+      <span class="rev-card-tag">Recurring Revenue</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-card-icon">🏫</div>
+      <div class="rev-card-title">Workshops & Life Skills</div>
+      <div class="rev-card-body">Programming for neurodivergent individuals and their caregivers — social skills groups, sensory regulation workshops, caregiver education sessions, and practitioner training days that generate event-based revenue.</div>
+      <span class="rev-card-tag">Event Revenue</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-card-icon">🎓</div>
+      <div class="rev-card-title">Certification Programs</div>
+      <div class="rev-card-body">Formal training and certification for stylists, wellness providers, and facility operators seeking to implement Gifted Hands methodology — the highest-margin revenue stream with the greatest scalability potential.</div>
+      <span class="rev-card-tag">High-Margin IP</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-card-icon">🤝</div>
+      <div class="rev-card-title">Licensing & Franchise</div>
+      <div class="rev-card-body">Mature-phase licensing of the Gifted Hands operating system to independent operators or franchise partners — generating royalty revenue without proportional capital requirements.</div>
+      <span class="rev-card-tag">Scale Revenue</span>
+    </div>
+    <div class="rev-card">
+      <div class="rev-card-icon">🏛️</div>
+      <div class="rev-card-title">Institutional Partnerships</div>
+      <div class="rev-card-body">Service agreements with healthcare systems, school districts, disability organizations, and government agencies. Grant funding and nonprofit partnership revenue diversify away from consumer-only dependence.</div>
+      <span class="rev-card-tag">Mission Revenue</span>
+    </div>
+  </div>
+</section>
+
+<!-- 10. STRATEGIC RECOMMENDATIONS -->
+<section class="section" id="recommendations" style="background: var(--warm-white);">
+  <div class="section-label" data-num="10">Strategic Recommendations</div>
+  <h2 class="section-title">Twelve imperatives<br><em>for disciplined execution.</em></h2>
+
+  <div class="recs-list">
+    <div class="rec-item">
+      <div class="rec-num">1</div>
+      <div class="rec-content">
+        <div class="rec-title">Validate Before Investing</div>
+        <div class="rec-body">Conduct in-depth customer discovery with at least 20–30 caregivers of neurodivergent family members before committing capital to physical infrastructure. Real insight from the target audience is irreplaceable and will reshape assumptions.</div>
+        <span class="rec-priority" style="background:rgba(139,69,19,0.1);color:var(--sienna);">Immediate Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">2</div>
+      <div class="rec-content">
+        <div class="rec-title">Start With a Pop-Up, Not a Lease</div>
+        <div class="rec-body">Phase 2 pop-up activations in partner facilities are far lower risk than committing to a long-term lease before the operational model is proven. Use partner facilities to test demand, workflow, and caregiver trust simultaneously.</div>
+        <span class="rec-priority" style="background:rgba(139,69,19,0.1);color:var(--sienna);">Immediate Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">3</div>
+      <div class="rec-content">
+        <div class="rec-title">Document Every Protocol From Day One</div>
+        <div class="rec-body">Every intake process, service accommodation, sensory protocol, and caregiver communication framework should be documented as though it will be licensed tomorrow. The operating manual is the business at enterprise scale.</div>
+        <span class="rec-priority" style="background:rgba(139,69,19,0.1);color:var(--sienna);">Immediate Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">4</div>
+      <div class="rec-content">
+        <div class="rec-title">Build Trust Before Commerce</div>
+        <div class="rec-body">Partnership with established community organizations — disability advocacy groups, parent support networks, healthcare providers — before public launch creates warm credibility that paid marketing cannot replicate.</div>
+        <span class="rec-priority" style="background:rgba(201,168,76,0.12);color:var(--gold-dark);">Phase 1–2 Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">5</div>
+      <div class="rec-content">
+        <div class="rec-title">Monitor The Sensory Safe Solution Closely</div>
+        <div class="rec-body">This competitor represents the highest long-term strategic threat — a certification and licensing IP model. Gifted Hands must build its own training and certification infrastructure before this operator expands nationally or moves into the Texas market.</div>
+        <span class="rec-priority" style="background:rgba(139,69,19,0.1);color:var(--sienna);">Ongoing Watch</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">6</div>
+      <div class="rec-content">
+        <div class="rec-title">Claim the Premium Specialist Position Loudly</div>
+        <div class="rec-body">Gifted Hands should not compete on price — it should compete on depth of expertise, quality of experience, and emotional safety. Premium positioning commands premium pricing and attracts the audience most likely to become long-term members.</div>
+        <span class="rec-priority" style="background:rgba(201,168,76,0.12);color:var(--gold-dark);">Brand Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">7</div>
+      <div class="rec-content">
+        <div class="rec-title">Design for Recurring Revenue From Phase 3</div>
+        <div class="rec-body">The membership model should be tested at the pilot studio phase — not as an afterthought. Recurring revenue changes the unit economics, increases enterprise valuation, and deepens community loyalty simultaneously.</div>
+        <span class="rec-priority" style="background:rgba(45,74,62,0.1);color:var(--forest);">Phase 3 Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">8</div>
+      <div class="rec-content">
+        <div class="rec-title">Invest in Emotional Brand Storytelling Early</div>
+        <div class="rec-body">The most powerful marketing in this category will be family stories — documented, with permission, across social media and content platforms. Caregiver testimonials and community case studies build credibility faster than any paid advertising.</div>
+        <span class="rec-priority" style="background:rgba(201,168,76,0.12);color:var(--gold-dark);">Phase 2 Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">9</div>
+      <div class="rec-content">
+        <div class="rec-title">Seek Institutional Validation Early</div>
+        <div class="rec-body">Healthcare system partnerships, school district collaborations, and nonprofit support provide both referral pipelines and credibility that makes future investor conversations significantly more compelling.</div>
+        <span class="rec-priority" style="background:rgba(45,74,62,0.1);color:var(--forest);">Phase 3 Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">10</div>
+      <div class="rec-content">
+        <div class="rec-title">Hire Practitioners Who Share the Mission</div>
+        <div class="rec-body">Team culture in a trust-intensive service environment is foundational. Every practitioner must authentically care about neurodivergent individuals and their families. Credentials can be trained; genuine empathy cannot. Hiring is brand expression.</div>
+        <span class="rec-priority" style="background:rgba(201,168,76,0.12);color:var(--gold-dark);">Phase 2–3 Priority</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">11</div>
+      <div class="rec-content">
+        <div class="rec-title">Resist the Full Vision Until the Foundation Is Proven</div>
+        <div class="rec-body">The full vision — memberships, workshops, content studio, certification, licensing, franchise — is the destination, not the launch. Resist the urge to build everything at once. Execution complexity is the primary risk to success.</div>
+        <span class="rec-priority" style="background:rgba(139,69,19,0.1);color:var(--sienna);">Constant Discipline</span>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">12</div>
+      <div class="rec-content">
+        <div class="rec-title">Think Enterprise From Day One</div>
+        <div class="rec-body">Even if you are launching a pop-up, make decisions that a franchise or licensing company would make: document systems, build IP, protect brand, create replicable models. The business is the system. The system is the asset.</div>
+        <span class="rec-priority" style="background:rgba(201,168,76,0.12);color:var(--gold-dark);">Strategic Mindset</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Gifted <em>Hands</em></div>
+  <div class="footer-meta">
+    Azaniah Israel & Richmond Lewis · Founders<br>
+    Competitive Intelligence & Strategic Positioning Report<br>
+    Confidential · Pre-Launch Strategy Document · 2024
+  </div>
+</footer>
+
+<script>
+  // Animate elements on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.competitor-card, .pillar, .risk-card, .phase-card, .layer-card, .rev-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+
+  // Animate revenue bars
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fills = entry.target.querySelectorAll('.rev-bar-fill');
+        fills.forEach(fill => {
+          const width = fill.style.width;
+          fill.style.width = '0%';
+          setTimeout(() => { fill.style.width = width; }, 100);
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+
+  const revenueSection = document.querySelector('.revenue-bars');
+  if (revenueSection) barObserver.observe(revenueSection);
+
+  // Smooth scroll for nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
