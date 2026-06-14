@@ -61,7 +61,13 @@ export default function SessionPage() {
         />
       )}
 
-      {mode === "live" && <LiveBoardroom responses={session.responses} />}
+      {mode === "live" && (
+        <LiveBoardroom
+          members={board.members}
+          board={{ purpose: board.purpose, values: board.values, goals: board.goals }}
+          presentation={session.presentationText}
+        />
+      )}
     </main>
   );
 }
