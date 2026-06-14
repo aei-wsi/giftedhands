@@ -102,3 +102,42 @@ export interface RespondResponse {
   synthesis: string;
   mocked: boolean;
 }
+
+// ── Live boardroom discussion (conversational round-table) ──
+export type DiscussionFlow = "organic" | "moderated" | "hybrid";
+export type ChairMode = "dedicated" | "member" | "none";
+
+export type TurnKind =
+  | "open"
+  | "react"
+  | "challenge"
+  | "agree"
+  | "build"
+  | "moderate"
+  | "consensus";
+
+export interface DiscussionTurn {
+  speakerId: string; // a member id, or "chair"
+  speakerName: string;
+  archetype?: Archetype; // undefined for the chair
+  addressedToId?: string;
+  addressedToName?: string;
+  kind: TurnKind;
+  text: string;
+}
+
+export interface DiscussRequest {
+  presentation: string;
+  members: BoardMember[];
+  board: Pick<Board, "purpose" | "values" | "goals"> & { userName?: string };
+  flow: DiscussionFlow;
+  chair: ChairMode;
+  chairMemberId?: string;
+}
+
+export interface DiscussResponse {
+  turns: DiscussionTurn[];
+  chairName?: string;
+  chairId?: string;
+  mocked: boolean;
+}
