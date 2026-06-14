@@ -88,3 +88,61 @@ h3,
     border: 1px solid var(--border);
   }
 }
+
+/* ── Generated avatars + talking animation (Live Boardroom) ── */
+.av-bust {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72%;
+  height: 92%;
+}
+.av-mouth {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scaleY(0.3);
+}
+.tile-speaking .av-mouth {
+  animation: talk 0.25s infinite ease-in-out;
+}
+@keyframes talk {
+  0%,
+  100% {
+    transform: scaleY(0.28);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.eq-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: #3bd17a;
+  animation: eqbounce 0.9s infinite ease-in-out;
+}
+@keyframes eqbounce {
+  0%,
+  100% {
+    height: 5px;
+  }
+  50% {
+    height: 18px;
+  }
+}
+.cap-cursor {
+  display: inline-block;
+  width: 7px;
+  background: var(--gold);
+  margin-left: 2px;
+  animation: capblink 0.8s infinite;
+}
+@keyframes capblink {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
