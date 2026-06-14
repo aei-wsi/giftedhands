@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0e1a;
+  --surface: #111827;
+  --card: #1c2333;
+  --gold: #c9a84c;
+  --gold-light: #e8c86e;
+  --text-primary: #f0f0f0;
+  --text-secondary: #9ca3af;
+  --border: rgba(201, 168, 76, 0.2);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.3);
+}
+
+/* Thin gold scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.35);
+  border-radius: 6px;
+}
+
+@layer components {
+  .gold-text {
+    color: var(--gold);
+  }
+  .card-surface {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-md px-5 py-2.5 font-medium transition;
+    background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    color: #1a1407;
+  }
+  .btn-gold:hover {
+    filter: brightness(1.08);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-md px-5 py-2.5 font-medium transition;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .btn-ghost:hover {
+    border-color: var(--gold);
+  }
+  .input-field {
+    @apply w-full rounded-md px-3 py-2 outline-none transition;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .input-field:focus {
+    border-color: var(--gold);
+  }
+  .badge {
+    @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-medium;
+    background: rgba(201, 168, 76, 0.12);
+    color: var(--gold-light);
+    border: 1px solid var(--border);
+  }
+}
