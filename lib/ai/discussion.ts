@@ -7,8 +7,7 @@ import type {
   TurnKind,
 } from "@/lib/types";
 import { ARCHETYPE_LABELS } from "@/lib/types";
-
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+import { ANTHROPIC_MODEL as MODEL, anthropicApiKey, hasAnthropic } from "@/lib/ai/key";
 
 function resolveChair(req: DiscussRequest): { name?: string; id?: string } {
   if (req.chair === "none") return {};
@@ -27,7 +26,7 @@ export async function orchestrateBoardDiscussion(
   req: DiscussRequest
 ): Promise<DiscussResponse> {
   const chair = resolveChair(req);
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!hasAnthropic()) {
     return { turns: mockDiscussion(req, chair), chairName: chair.name, chairId: chair.id, mocked: true };
   }
   try {
@@ -96,7 +95,7 @@ Rules:
 - ${chair.name ? `Use speakerId "chair" only if the chair is the dedicated facilitator; otherwise the chair is the member id.` : "No chair turns."}
 - End with one or two turns of kind "consensus" (spoken by ${dedicatedChair ? `the chair` : `the chair/most senior voice`}) summarizing agreement, the key tension, and exactly 3 action items.`;
 
-  const res = await new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }).messages.create({
+  const res = await new Anthropic({ apiKey: anthropicApiKey() }).messages.create({
     model: MODEL,
     max_tokens: 2000,
     messages: [{ role: "user", content: prompt }],
