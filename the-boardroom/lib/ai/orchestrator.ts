@@ -7,15 +7,12 @@ import type {
 } from "@/lib/types";
 import { ARCHETYPE_LABELS } from "@/lib/types";
 import { generateBoardSynthesis } from "@/lib/ai/synthesis";
+import { ANTHROPIC_MODEL as MODEL, anthropicApiKey, hasAnthropic } from "@/lib/ai/key";
 
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
-
-export function hasAnthropic(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
-}
+export { hasAnthropic };
 
 function client(): Anthropic {
-  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return new Anthropic({ apiKey: anthropicApiKey() });
 }
 
 // Inject live board context into a member's static persona prompt.

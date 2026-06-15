@@ -1,13 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { PersonaResponse } from "@/lib/types";
-
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+import { ANTHROPIC_MODEL as MODEL, anthropicApiKey, hasAnthropic } from "@/lib/ai/key";
 
 export async function generateBoardSynthesis(
   responses: PersonaResponse[],
   presentation: string
 ): Promise<string> {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!hasAnthropic()) {
     return mockSynthesis(responses);
   }
 
@@ -25,7 +24,7 @@ Generate a 3-paragraph Board Consensus that:
 Write in the voice of a senior board secretary — clear, direct, no fluff. After the three paragraphs, output an "ACTION ITEMS:" list with exactly 3 bullet points.`;
 
   const synthesis = await new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
+    apiKey: anthropicApiKey(),
   }).messages.create({
     model: MODEL,
     max_tokens: 500,
