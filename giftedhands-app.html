@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gifted Hands Experience System</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc}
+.sidebar{background-color:#1e1b4b}
+.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:500;margin:2px}
+.emoji-btn{font-size:26px;cursor:pointer;padding:5px 8px;border-radius:10px;border:2px solid transparent;transition:all .15s}
+.emoji-btn.sel{border-color:#6366f1;background:#eef2ff}
+textarea{resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid #6366f1;outline-offset:1px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+/* ── MOCK DATA ─────────────────────────────────────────── */
+const SSEPS=[
+  {id:'ssep-1',name:'Jordan M.',role:'Primary Experience Professional',availability:'Busy',
+   skills:['non-verbal support','child-friendly pacing','scissor-only comfort','visual schedule use'],
+   bio:'Jordan specializes in younger clients who need extra time and quiet environments.',appts:['appt-1','appt-3']},
+  {id:'ssep-2',name:'Alex R.',role:'Sensory Experience Professional',availability:'Available',
+   skills:['low-sound service','slow transition support','teen/adult sensory support','high-anxiety experience'],
+   bio:'Alex brings calm energy to every appointment. Especially skilled with older clients.',appts:['appt-2']},
+  {id:'ssep-3',name:'Taylor B.',role:'Comfort & Calm Specialist',availability:'Busy',
+   skills:['high-anxiety client experience','deep pressure calming','child-friendly pacing','caregiver collaboration'],
+   bio:'Taylor has extensive experience with high-support clients and works closely with caregivers.',appts:['appt-4','appt-5']},
+  {id:'ssep-4',name:'Sam K.',role:'Engagement & Regulation Specialist',availability:'Available',
+   skills:['non-verbal communication','train/media engagement','sensory regulation','slow transition support'],
+   bio:"Sam uses interest-based engagement strategies and has a gift for building trust.",appts:['appt-6']},
+];
+
+const CLIENTS=[
+  {id:'client-1',firstName:'Aiden',lastName:'Thompson',age:8,pronouns:'He/Him',risk:'Moderate',lastVisit:'May 10, 2026',isNew:false,
+   tags:['train enthusiast','returning client','visual supports'],
+   cg:{name:'Tiffany Thompson',rel:'Mother',phone:'(512) 555-0178',notes:'Very engaged. Brings train book each visit.'},
+   ecp:{comm:'Verbal with visual supports. Responds well to picture schedules and step-by-step explanations.',
+     avoid:['loud clippers','wet hair on neck','unexpected touch'],
+     pref:['light pressure on shoulders','warm water rinse','soft towel'],
+     calm:['train videos on tablet','counting steps aloud','fidget spinner'],
+     transition:'Needs 2-minute verbal warning before any chair movement.',
+     motivators:['trains','dinosaurs','sticker reward'],
+     triggers:['sudden loud noises','clippers without warning'],
+     goals:'Maintain comfort level. Introduce hair wash this cycle.',
+     staffNotes:'Train book is the golden ticket. Keep clipper guard on until he gives thumbs up.'},
+   res:{lighting:'Dim overhead, warm side lamp. Avoid fluorescent.',soundLevel:'Low — no music or soft instrumental only',
+     chair:'Booster seat, standard chair reclined slightly',tools:['train video tablet','fidget spinner','weighted lap pad'],
+     visuals:'Picture schedule on counter. Show each step before doing.',pacing:'Slow and narrated. Pause between each step.',
+     time:'5 min pre-chair, 2 min between steps',doNotUse:['electric clippers near ears without warning','surprise spray bottle'],
+     ssepRec:'Jordan M. (primary relationship built)'}},
+  {id:'client-2',firstName:'Maya',lastName:'Rodriguez',age:6,pronouns:'She/Her',risk:'High',lastVisit:null,isNew:true,
+   tags:['new client','visual learner','high support'],
+   cg:{name:'Carmen Rodriguez',rel:'Mother',phone:'(512) 555-3348',notes:'Mother is very anxious. Reassure her first.'},
+   ecp:{comm:'Limited verbal. Uses picture exchange cards. Responds to gestures and modeling.',
+     avoid:['buzzing sounds','neck cape touch','hair dryer heat','multiple people talking'],
+     pref:['bubbles (visual)','soft brush on hands','rainbow spinner toy'],
+     calm:['bubble machine','caregiver proximity','soft singing'],
+     transition:'Caregiver leads transition. Do not initiate physical guidance without consent.',
+     motivators:['bubbles','rainbow colors','stickers'],
+     triggers:['any buzzing near head','raised voices','cold water'],
+     goals:'Positive first impression. Even partial service is a win.',
+     staffNotes:'Go VERY slow. If she covers ears, pause everything immediately.'},
+   res:{lighting:'Soft warm light only. Dim to minimum.',soundLevel:'Silent or near-silent. No music.',
+     chair:'Caregiver lap first — chair only if she initiates',tools:['bubble machine','rainbow spinner','caregiver proximity'],
+     visuals:'Bilingual visual schedule (Spanish/English).',pacing:'Extremely slow. One action at a time.',
+     time:'10 min decompression on arrival. 15-min max first visit.',doNotUse:['clippers of any kind','hairdryer','loud spray bottles'],
+     ssepRec:'Taylor B. (high-anxiety experience specialist)'}},
+  {id:'client-3',firstName:'Jordan',lastName:'Lee',age:12,pronouns:'They/Them',risk:'Low',lastVisit:'May 28, 2026',isNew:false,
+   tags:['music-focused','returning client','independent'],
+   cg:{name:'Wei Lee',rel:'Parent',phone:'(512) 555-1126',notes:'Prefers to wait in lobby. Jordan is comfortable independently.'},
+   ecp:{comm:'Fully verbal. Direct communication preferred. Dislikes small talk.',
+     avoid:['scented products','tight cape','overhead sprayer'],
+     pref:['music through personal earbuds','consistent temperature water','gentle scalp pressure'],
+     calm:['own music playlist','minimal conversation','knowing what will happen'],
+     transition:'Verbal schedule at start is enough.',
+     motivators:['music','efficiency','respecting autonomy'],
+     triggers:['scented shampoo','unexpected service additions','being talked over'],
+     goals:'Consistent, efficient service with sensory accommodations honored.',
+     staffNotes:'Let them put earbuds in before starting. Ask before switching any product.'},
+   res:{lighting:'Normal overhead fine — not light-sensitive',soundLevel:'Personal earbuds preferred.',
+     chair:'Standard chair, upright',tools:['personal music device','unscented products only'],
+     visuals:'Verbal rundown at start only.',pacing:'Normal to brisk — they prefer efficient service',
+     time:'1 minute max. Very adaptable.',doNotUse:['scented shampoo/conditioner','adding services without asking'],
+     ssepRec:'Alex R. (low-stimulation, respects autonomy)'}},
+  {id:'client-4',firstName:'Caleb',lastName:'Washington',age:5,pronouns:'He/Him',risk:'High',lastVisit:null,isNew:true,
+   tags:['new client','high support','heavy prep needed'],
+   cg:{name:'Marcus Washington',rel:'Father',phone:'(512) 555-4459',notes:'Father has done extensive prep with social stories.'},
+   ecp:{comm:'Social stories and visual schedules. Uses AAC device at school. Echolalic at times.',
+     avoid:['water near face','clippers near any body part','strangers in personal space'],
+     pref:['deep pressure input','heavy blanket','low vibration/hum'],
+     calm:['deep pressure vest','social story about haircut','father narrating steps'],
+     transition:'Father must be present throughout. Use social story book to preview each step.',
+     motivators:['construction trucks','vehicle videos','high-five celebration'],
+     triggers:['water near face','clippers sound','sudden movement in mirror'],
+     goals:'Sit in chair with father present. Any tool introduction is bonus.',
+     staffNotes:'Trust-building visit only. Do not rush. Success = Caleb feels safe.'},
+   res:{lighting:'Dimmed to minimum. Cover or angle any mirrors.',soundLevel:'Silent. No clippers on in room.',
+     chair:'Father lap only for this visit.',tools:['deep pressure vest','social story book','vehicle video tablet','heavy lap blanket'],
+     visuals:'Social story book — each page = one step.',pacing:'Extremely slow. Trust-building visit only.',
+     time:'15 minutes decompression. No time limit.',doNotUse:['any clippers — even showing them','spray bottle near head','dryer'],
+     ssepRec:'Taylor B. with Sam K. as secondary'}},
+  {id:'client-5',firstName:'Priya',lastName:'Patel',age:9,pronouns:'She/Her',risk:'Low',lastVisit:'May 20, 2026',isNew:false,
+   tags:['returning client','cooperative','peer model candidate'],
+   cg:{name:'Anita Patel',rel:'Mother',phone:'(512) 555-6781',notes:'Interested in peer modeling program. Follow up.'},
+   ecp:{comm:'Fully verbal, enthusiastic. Loves to chat with SSEP during service.',
+     avoid:['cold water rinse','strong scented products'],
+     pref:['warm water','scalp massage','chatting about her day'],
+     calm:['conversation','warm towel wrap','choosing her own music'],
+     transition:'No additional support needed. Very adaptable.',
+     motivators:['music','conversation','compliments'],
+     triggers:['cold water surprise','heavy cologne/perfume'],
+     goals:'Consistent positive experience. Mother exploring peer model program.',
+     staffNotes:'Great ambassador client. May participate in peer modeling in the future.'},
+   res:{lighting:'Normal — no special accommodation',soundLevel:'Light music okay. Chatty environment is fine.',
+     chair:'Standard chair — any position',tools:['warm towel','music of her choice'],
+     visuals:'Not needed',pacing:'Normal',time:'Minimal — very adaptable',
+     doNotUse:['cold water rinse without warning','heavy fragrance products'],
+     ssepRec:'Any SSEP — Jordan M. preferred for continuity.'}},
+];
+
+const APPTS_INIT=[
+  {id:'appt-1',cId:'client-1',sId:'ssep-1',time:'9:00 AM',status:'Completed',service:'Haircut + Comfort Assessment',dur:45,
+   acc:{mood:4,cgNotes:'Brought new train book. Ready to try hair wash today.',sensory:'Good',ready:'Yes',delay:0}},
+  {id:'appt-2',cId:'client-3',sId:'ssep-2',time:'10:00 AM',status:'Arrived',service:'Haircut',dur:30,
+   acc:{mood:3,cgNotes:'Parent waiting in lobby as usual.',sensory:'Fair',ready:'Yes',delay:0}},
+  {id:'appt-3',cId:'client-5',sId:'ssep-1',time:'11:00 AM',status:'In Progress',service:'Haircut + Scalp Treatment',dur:40,
+   acc:{mood:5,cgNotes:'Mom asked about peer modeling program timing.',sensory:'Good',ready:'Yes',delay:0}},
+  {id:'appt-4',cId:'client-2',sId:'ssep-3',time:'1:00 PM',status:'Pending',service:'First Visit — Trust Building',dur:60,acc:null},
+  {id:'appt-5',cId:'client-4',sId:'ssep-3',time:'2:30 PM',status:'Pending',service:'First Visit — Trust Building',dur:60,acc:null},
+  {id:'appt-6',cId:'client-1',sId:'ssep-4',time:'4:00 PM',status:'Pending',service:'Follow-up Check-In',dur:20,acc:null},
+];
+
+const NOTES_INIT=[
+  {id:'note-1',aId:'appt-1',cId:'client-1',
+   worked:'Train book engagement was excellent. Hair wash introduced successfully — first time ever. Counting steps aloud kept him regulated.',
+   didnt:'Slight escalation when clipper guard slipped near ear. Recovered quickly with counting strategy.',
+   triggers:['unexpected clipper sound near right ear'],tools:['train video tablet','counting steps aloud','fidget spinner'],
+   transRating:4,comfortRating:4,
+   changes:'Continue narrating every step. Introduce hairdryer on low next visit.',
+   cgFeedback:"Mom was thrilled about the hair wash. Said he talked about trains the whole ride home.",
+   returning:'Yes'}
+];
+
+/* ── HELPERS ───────────────────────────────────────────── */
+const gc=id=>CLIENTS.find(c=>c.id===id);
+const gs=id=>SSEPS.find(s=>s.id===id);
+const initials=n=>{const p=n.trim().split(' ');return(p[0][0]+(p[1]?.[0]||'')).toUpperCase()};
+const avColors=id=>{const c=[['bg-indigo-100','text-indigo-700'],['bg-purple-100','text-purple-700'],['bg-emerald-100','text-emerald-700'],['bg-rose-100','text-rose-700'],['bg-amber-100','text-amber-700']];const i=parseInt(id.replace(/\D/g,''))%5;return c[i]};
+
+/* ── UI ATOMS ──────────────────────────────────────────── */
+const RiskBadge=({r})=>{const m={High:'bg-red-100 text-red-700 border-red-200',Moderate:'bg-amber-100 text-amber-700 border-amber-200',Low:'bg-emerald-100 text-emerald-700 border-emerald-200'};return <span className={`chip border ${m[r]||'bg-slate-100 text-slate-500'}`}>{r} Risk</span>};
+const StBadge=({s})=>{const m={Arrived:'bg-blue-100 text-blue-700 border-blue-200','In Progress':'bg-purple-100 text-purple-700 border-purple-200',Completed:'bg-emerald-100 text-emerald-700 border-emerald-200',Pending:'bg-slate-100 text-slate-500 border-slate-200'};return <span className={`chip border ${m[s]||'bg-slate-100'}`}>{s}</span>};
+const AvBadge=({a})=>{const m={Available:'bg-emerald-100 text-emerald-700',Busy:'bg-amber-100 text-amber-700',Off:'bg-red-100 text-red-600'};return <span className={`chip ${m[a]||''}`}>{a}</span>};
+const Card=({children,className='',onClick})=><div onClick={onClick} className={`bg-white rounded-xl border border-slate-200 shadow-sm ${className}`}>{children}</div>;
+const Lbl=({children})=><p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{children}</p>;
+const Stars=({v,onChange})=><div className="flex gap-1">{[1,2,3,4,5].map(n=><span key={n} onClick={()=>onChange&&onChange(n)} style={{cursor:onChange?'pointer':'default',color:n<=v?'#f59e0b':'#d1d5db',fontSize:20}}>★</span>)}</div>;
+
+/* ── SIDEBAR ───────────────────────────────────────────── */
+const Sidebar=({hash})=>{
+  const items=[
+    {h:'#/',l:'Dashboard',i:'⊞'},{h:'#/clients',l:'Client Profiles',i:'👤'},
+    {h:'#/appointments',l:'Appointments',i:'📅'},{h:'#/intake',l:'New Client (ICPS)',i:'➕'},
+    {h:'#/ssep',l:'SSEP Team',i:'⭐'},
+  ];
+  return <aside className="sidebar fixed left-0 top-0 h-screen w-64 flex flex-col z-40">
+    <div className="px-5 py-5 border-b border-indigo-900">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white text-lg flex-shrink-0">♡</div>
+        <div><p className="text-white font-semibold text-sm">Gifted Hands</p><p className="text-indigo-300 text-xs">Experience System</p></div>
+      </div>
+    </div>
+    <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Navigation</p>
+      {items.map(({h,l,i})=>{
+        const active=h==='#/'?hash==='#/':hash.startsWith(h);
+        return <a key={h} href={h} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active?'bg-indigo-600 text-white':'text-indigo-200 hover:bg-indigo-900 hover:text-white'}`}><span className="text-base">{i}</span>{l}</a>;
+      })}
+    </nav>
+    <div className="px-4 py-4 border-t border-indigo-900">
+      <div className="bg-indigo-900 rounded-lg px-3 py-2.5 mb-3">
+        <p className="text-indigo-300 text-xs font-semibold mb-1">System Modules</p>
+        <p className="text-indigo-400 text-xs">ECP · ICPS · RES · ACC</p>
+      </div>
+      <p className="text-indigo-500 text-xs leading-relaxed">Gifted Hands Experience System is an experience-supportive workflow tool. It is not a clinical diagnostic, therapy, or treatment platform.</p>
+    </div>
+  </aside>;
+};
+
+/* ── DASHBOARD ─────────────────────────────────────────── */
+const Dashboard=({appts})=>{
+  const total=appts.length,active=appts.filter(a=>a.status==='Arrived'||a.status==='In Progress').length,
+        done=appts.filter(a=>a.status==='Completed').length,pending=appts.filter(a=>a.status==='Pending').length;
+  const highPending=appts.filter(a=>gc(a.cId)?.risk==='High'&&a.status==='Pending');
+  const stats=[
+    {l:"Today's Appointments",v:total,c:'text-indigo-600'},{l:'Checked In / In Progress',v:active,c:'text-blue-600'},
+    {l:'Completed',v:done,c:'text-emerald-600'},{l:'Pending',v:pending,c:'text-amber-600'},
+  ];
+  return <div className="p-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Welcome, Jordan M. 👋</h1><p className="text-slate-500 text-sm mt-1">Today's Schedule — June 7, 2026 · {total} appointments</p></div>
+    <div className="grid grid-cols-4 gap-4 mb-8">{stats.map(s=><Card key={s.l} className="p-5"><div className={`text-3xl font-bold mb-1 ${s.c}`}>{s.v}</div><div className="text-xs text-slate-500 font-medium">{s.l}</div></Card>)}</div>
+    {highPending.length>0&&<div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3">
+      <span className="text-lg mt-0.5">⚠️</span>
+      <div><p className="font-semibold text-amber-800 text-sm">High-Support Clients Incoming</p>
+        <p className="text-amber-700 text-sm mt-0.5">Review ECPs and RES setups before these arrivals.</p>
+        <div className="flex gap-2 mt-2">{highPending.map(a=>{const c=gc(a.cId);return c?<a key={a.id} href={`#/clients/${c.id}/res`} className="text-xs bg-amber-100 text-amber-800 border border-amber-200 rounded-lg px-2.5 py-1 hover:bg-amber-200 font-medium">Review {c.firstName}'s RES →</a>:null})}</div>
+      </div>
+    </div>}
+    <div className="flex items-center justify-between mb-4"><h2 className="text-base font-semibold text-slate-800">Today's Schedule</h2><a href="#/appointments" className="text-xs text-indigo-600 font-medium hover:underline">View all →</a></div>
+    <div className="space-y-2">{appts.map(a=>{
+      const c=gc(a.cId),s=gs(a.sId);if(!c)return null;
+      const[bg,fg]=avColors(c.id);
+      return <Card key={a.id} className="hover:border-indigo-200 transition-colors">
+        <div className="flex items-center gap-4 p-4">
+          <div className="text-sm font-semibold text-slate-600 w-20 flex-shrink-0">{a.time}</div>
+          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xs font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
+          <div className="flex-1 min-w-0"><p className="font-semibold text-slate-800 text-sm">{c.firstName} {c.lastName}</p><p className="text-xs text-slate-500">{a.service} · {s?.name}</p></div>
+          <div className="flex items-center gap-2 flex-shrink-0"><RiskBadge r={c.risk}/><StBadge s={a.status}/></div>
+          <div className="flex gap-2 flex-shrink-0">
+            {a.status==='Pending'&&<a href={`#/clients/${c.id}/acc`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg px-2.5 py-1 hover:bg-indigo-100 font-medium">Check In</a>}
+            {a.status==='Completed'&&<a href={`#/appointments/${a.id}/notes`} className="text-xs bg-slate-50 text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-100 font-medium">Notes</a>}
+            <a href={`#/clients/${c.id}`} className="text-xs bg-white text-slate-500 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-50 font-medium">View ECP</a>
+          </div>
+        </div>
+      </Card>;
+    })}</div>
+  </div>;
+};
+
+/* ── CLIENTS LIST ──────────────────────────────────────── */
+const ClientList=({extra})=>{
+  const all=[...CLIENTS,...extra];
+  const[q,setQ]=useState('');const[rf,setRf]=useState('All');
+  const filtered=all.filter(c=>{
+    const m=!q||`${c.firstName} ${c.lastName}`.toLowerCase().includes(q.toLowerCase())||c.tags.some(t=>t.toLowerCase().includes(q.toLowerCase()));
+    return m&&(rf==='All'||c.risk===rf);
+  });
+  return <div className="p-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Client Profiles</h1><p className="text-slate-500 text-sm mt-1">{all.length} clients</p></div>
+    <div className="flex gap-3 mb-6">
+      <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search by name or tag..." className="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm bg-white"/>
+      {['All','Low','Moderate','High'].map(r=><button key={r} onClick={()=>setRf(r)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${rf===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      {filtered.map(c=>{const[bg,fg]=avColors(c.id);return <Card key={c.id} className="p-5 hover:border-indigo-200 transition-colors cursor-pointer" onClick={()=>window.location.hash=`#/clients/${c.id}`}>
+        <div className="flex items-start gap-4">
+          <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-sm font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2"><h3 className="font-semibold text-slate-800">{c.firstName} {c.lastName}</h3><RiskBadge r={c.risk}/></div>
+            <p className="text-xs text-slate-500 mt-0.5">Age {c.age} · {c.pronouns}</p>
+            <div className="flex flex-wrap gap-1 mt-2">{c.tags.map(t=><span key={t} className="chip bg-indigo-50 text-indigo-600 border border-indigo-100">{t}</span>)}</div>
+            <div className="flex items-center justify-between mt-3">
+              <p className="text-xs text-slate-400">{c.lastVisit?`Last visit: ${c.lastVisit}`:'No previous visits'}</p>
+              <a href={`#/clients/${c.id}`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-lg px-2.5 py-1 font-medium hover:bg-indigo-100">View ECP →</a>
+            </div>
+          </div>
+        </div>
+      </Card>;})}
+    </div>
+    {filtered.length===0&&<div className="text-center py-16 text-slate-400"><p className="text-3xl mb-2">🔍</p><p className="font-medium">No clients match your search</p></div>}
+  </div>;
+};
+
+/* ── ECP PAGE ──────────────────────────────────────────── */
+const ECPPage=({cId,appts})=>{
+  const c=gc(cId);if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
+  const{ecp,res,cg}=c;const[bg,fg]=avColors(c.id);
+  const myAppts=appts.filter(a=>a.cId===cId);
+  return <div className="p-8">
+    <a href="#/clients" className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to Clients</a>
+    <Card className="p-6 mb-6"><div className="flex items-start gap-5">
+      <div className={`w-16 h-16 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xl font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
+      <div className="flex-1">
+        <div className="flex items-start gap-3 flex-wrap"><h1 className="text-2xl font-bold text-slate-800">{c.firstName} {c.lastName}</h1><RiskBadge r={c.risk}/>{c.isNew&&<span className="chip bg-purple-100 text-purple-700 border border-purple-200">New Client</span>}</div>
+        <p className="text-slate-500 text-sm mt-1">Age {c.age} · {c.pronouns} · {c.lastVisit?`Last visit: ${c.lastVisit}`:'No previous visits'}</p>
+        <div className="flex flex-wrap gap-1 mt-2">{c.tags.map(t=><span key={t} className="chip bg-slate-100 text-slate-600">{t}</span>)}</div>
+      </div>
+      <div className="flex gap-2">
+        <a href={`#/clients/${cId}/acc`} className="text-xs bg-indigo-600 text-white rounded-lg px-3 py-2 font-medium hover:bg-indigo-700">ACC Check-In</a>
+        <a href={`#/clients/${cId}/res`} className="text-xs bg-white text-indigo-600 border border-indigo-200 rounded-lg px-3 py-2 font-medium hover:bg-indigo-50">View RES</a>
+      </div>
+    </div></Card>
+    <div className="grid grid-cols-3 gap-6">
+      <div className="col-span-2 space-y-4">
+        <Card className="p-5"><Lbl>Communication Style</Lbl><p className="text-sm text-slate-700">{ecp.comm}</p></Card>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-5"><Lbl>Sensory Avoidances</Lbl><div className="flex flex-wrap">{ecp.avoid.map(s=><span key={s} className="chip bg-red-50 text-red-700 border border-red-100">{s}</span>)}</div></Card>
+          <Card className="p-5"><Lbl>Sensory Preferences</Lbl><div className="flex flex-wrap">{ecp.pref.map(s=><span key={s} className="chip bg-emerald-50 text-emerald-700 border border-emerald-100">{s}</span>)}</div></Card>
+        </div>
+        <Card className="p-5"><Lbl>Calming Strategies</Lbl><div className="flex flex-wrap">{ecp.calm.map(s=><span key={s} className="chip bg-blue-50 text-blue-700 border border-blue-100">{s}</span>)}</div></Card>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-5"><Lbl>Transition Support</Lbl><p className="text-sm text-slate-700">{ecp.transition}</p></Card>
+          <Card className="p-5"><Lbl>Motivators</Lbl><div className="flex flex-wrap">{ecp.motivators.map(m=><span key={m} className="chip bg-purple-50 text-purple-700 border border-purple-100">{m}</span>)}</div></Card>
+        </div>
+        <Card className="p-5"><Lbl>Triggers / Things to Avoid</Lbl><div className="flex flex-wrap">{ecp.triggers.map(t=><span key={t} className="chip bg-red-50 text-red-700 border border-red-100">⚠ {t}</span>)}</div></Card>
+        <Card className="p-5"><Lbl>Staff Notes</Lbl><p className="text-sm text-slate-700 leading-relaxed">{ecp.staffNotes}</p></Card>
+      </div>
+      <div className="space-y-4">
+        <Card className="p-5"><Lbl>Parent / Guardian</Lbl><p className="font-semibold text-slate-800 text-sm">{cg.name}</p><p className="text-xs text-slate-500">{cg.rel} · {cg.phone}</p><p className="text-xs text-slate-600 mt-2 leading-relaxed border-t border-slate-100 pt-2">{cg.notes}</p></Card>
+        <Card className="p-5"><Lbl>Visit Goals</Lbl><p className="text-sm text-slate-700">{ecp.goals}</p></Card>
+        <Card className="p-5"><Lbl>Today's Appointments</Lbl>
+          {myAppts.length===0?<p className="text-xs text-slate-400">No appointments today</p>:myAppts.map(a=><div key={a.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0"><div><p className="text-xs font-medium text-slate-700">{a.time}</p><p className="text-xs text-slate-400">{a.service}</p></div><StBadge s={a.status}/></div>)}
+        </Card>
+        <Card className="p-5 bg-indigo-50 border-indigo-200">
+          <Lbl>RES Summary</Lbl>
+          <p className="text-xs text-slate-600 mb-1">💡 {res.lighting}</p>
+          <p className="text-xs text-slate-600 mb-1">🔊 {res.soundLevel}</p>
+          <p className="text-xs text-slate-600 mb-3">👤 {res.ssepRec}</p>
+          <a href={`#/clients/${cId}/res`} className="text-xs text-indigo-600 font-semibold hover:underline">View Full RES →</a>
+        </Card>
+      </div>
+    </div>
+  </div>;
+};
+
+/* ── RES PAGE ──────────────────────────────────────────── */
+const RESPage=({cId})=>{
+  const c=gc(cId);if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
+  const{res}=c;
+  return <div className="p-8">
+    <a href={`#/clients/${cId}`} className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to ECP</a>
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Recommended Experience Setup</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · RES</p></div>
+    <div className="grid grid-cols-3 gap-4 mb-4">
+      {[['💡 Lighting',res.lighting],['🔊 Sound Level',res.soundLevel],['🪑 Chair Type',res.chair],['⏱ Transition Time',res.time],['🖼 Visuals',res.visuals],['🏃 Service Pacing',res.pacing]].map(([l,v])=><Card key={l} className="p-5"><p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{l}</p><p className="text-sm text-slate-700 font-medium">{v}</p></Card>)}
+    </div>
+    <div className="grid grid-cols-2 gap-4 mb-4">
+      <Card className="p-5"><Lbl>🛠 Calming Tools to Prepare</Lbl><ul className="space-y-1 mt-2">{res.tools.map(t=><li key={t} className="flex items-center gap-2 text-sm text-slate-700"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0"></span>{t}</li>)}</ul></Card>
+      <Card className="p-5"><Lbl>👤 SSEP Recommendation</Lbl><p className="text-sm text-slate-700 font-medium mt-2">{res.ssepRec}</p><a href="#/ssep" className="text-xs text-indigo-600 hover:underline mt-3 block">View SSEP team →</a></Card>
+    </div>
+    <Card className="p-5 bg-red-50 border-red-200"><Lbl>🚫 Do-Not-Use Triggers</Lbl><ul className="space-y-2 mt-2">{res.doNotUse.map(t=><li key={t} className="flex items-start gap-2 text-sm text-red-700"><span className="font-bold flex-shrink-0">✕</span>{t}</li>)}</ul></Card>
+  </div>;
+};
+
+/* ── ACC PAGE ──────────────────────────────────────────── */
+const ACCPage=({cId})=>{
+  const c=gc(cId);
+  const[mood,setMood]=useState(3);const[sensory,setSensory]=useState('Good');const[ready,setReady]=useState('Yes');
+  const[cgN,setCgN]=useState('');const[notes,setNotes]=useState('');const[saved,setSaved]=useState(false);
+  if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
+  const emojis=['😰','😟','😐','🙂','😄'];const moodLabels=['Very Stressed','Uncomfortable','Neutral','Comfortable','Very Happy'];
+  return <div className="p-8">
+    <a href={`#/clients/${cId}`} className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to ECP</a>
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Arrival Comfort Check-In</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · ACC</p></div>
+    <div className="grid grid-cols-2 gap-6">
+      <div className="space-y-5">
+        <Card className="p-5"><Lbl>Current Mood / Comfort Level</Lbl>
+          <div className="flex gap-2 mt-3">{emojis.map((e,i)=><button key={i} className={`emoji-btn ${mood===i+1?'sel':''}`} onClick={()=>setMood(i+1)}>{e}</button>)}</div>
+          <p className="text-sm text-slate-500 mt-2">{moodLabels[mood-1]}</p>
+        </Card>
+        <Card className="p-5"><Lbl>Sensory Condition Today</Lbl>
+          <div className="flex gap-2 mt-2">{['Good','Fair','Cautious'].map(s=><button key={s} onClick={()=>setSensory(s)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${sensory===s?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{s}</button>)}</div>
+        </Card>
+        <Card className="p-5"><Lbl>Ready for Chair?</Lbl>
+          <div className="flex gap-2 mt-2 flex-wrap">{['Yes','Not Yet','Need Decompression'].map(r=><button key={r} onClick={()=>setReady(r)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${ready===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}</div>
+        </Card>
+        <Card className="p-5 bg-indigo-50 border-indigo-200"><Lbl>Quick Reference — ECP</Lbl>
+          <p className="text-xs text-slate-600 mb-1">Calming: <strong>{c.ecp.calm.join(', ')}</strong></p>
+          <p className="text-xs text-slate-600">Transition: <strong>{c.ecp.transition}</strong></p>
+        </Card>
+      </div>
+      <div className="space-y-5">
+        <Card className="p-5"><Lbl>Caregiver Notes Today</Lbl><textarea value={cgN} onChange={e=>setCgN(e.target.value)} placeholder="Any changes, updates, or notes from the caregiver..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
+        <Card className="p-5"><Lbl>ACC Notes</Lbl><textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Arrival observations, environmental adjustments needed..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
+        <div className="flex gap-3">
+          <button onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),3000);}} className="flex-1 bg-indigo-600 text-white rounded-lg px-4 py-3 text-sm font-semibold hover:bg-indigo-700 transition-colors">Save ACC Check-In</button>
+          <a href={`#/clients/${cId}/res`} className="flex-shrink-0 bg-white text-indigo-600 border border-indigo-200 rounded-lg px-4 py-3 text-sm font-semibold hover:bg-indigo-50">Update RES</a>
+        </div>
+        {saved&&<div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm text-emerald-700 font-medium text-center">✓ Check-in saved successfully</div>}
+      </div>
+    </div>
+  </div>;
+};
+
+/* ── ICPS INTAKE ───────────────────────────────────────── */
+const ICPSIntake=({onNew})=>{
+  const[step,setStep]=useState(1);const[done,setDone]=useState(false);
+  const[f,setF]=useState({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const steps=['Basic Info','Caregiver','Communication','Sensory Profile','Visit Goals','Consent'];
+  const addTag=(field,inp)=>{const v=f[inp].trim();if(v&&!f[field].includes(v))set(field,[...f[field],v]);set(inp,'');};
+  const rmTag=(field,v)=>set(field,f[field].filter(x=>x!==v));
+  const save=()=>{onNew({id:'client-'+Date.now(),firstName:f.fn,lastName:f.ln,age:parseInt(f.age)||0,pronouns:f.pronouns,risk:'Moderate',lastVisit:null,isNew:true,tags:['new client'],cg:{name:f.cgName,rel:f.cgRel,phone:f.cgPhone,notes:f.cgNotes},ecp:{comm:f.comm,avoid:f.avoid,pref:f.pref,calm:f.calm,transition:'',motivators:[],triggers:f.avoid,goals:f.goals,staffNotes:f.staffNotes},res:{lighting:'Soft warm light',soundLevel:'Low',chair:'Standard',tools:f.calm,visuals:'Visual schedule recommended',pacing:'Slow and narrated',time:'5 minutes',doNotUse:f.avoid,ssepRec:'Assign based on availability'}});setDone(true);};
+  if(done)return <div className="p-8"><div className="max-w-lg mx-auto text-center py-16"><div className="text-5xl mb-4">✅</div><h2 className="text-xl font-bold text-slate-800 mb-2">ECP Created Successfully</h2><p className="text-slate-500 text-sm mb-6">{f.fn} {f.ln}'s Experience & Comfort Profile has been saved.</p><div className="flex gap-3 justify-center"><a href="#/clients" className="bg-indigo-600 text-white rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-indigo-700">View All Clients</a><button onClick={()=>{setDone(false);setStep(1);setF({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});}} className="bg-white text-slate-600 border border-slate-200 rounded-lg px-5 py-2.5 text-sm font-semibold">New Intake</button></div></div></div>;
+  return <div className="p-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">New Client Intake</h1><p className="text-slate-500 text-sm mt-1">Intake & Comfort Profiling System (ICPS)</p></div>
+    <div className="flex items-center gap-2 mb-8">
+      {steps.map((s,i)=><React.Fragment key={s}>
+        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${i+1===step?'bg-indigo-600 text-white':i+1<step?'bg-emerald-500 text-white':'bg-slate-100 text-slate-400'}`}>{i+1<step?'✓':i+1}</div>
+        <span className={`text-xs font-medium hidden md:block ${i+1===step?'text-indigo-600':'text-slate-400'}`}>{s}</span>
+        {i<steps.length-1&&<div className={`flex-1 h-0.5 ${i+1<step?'bg-emerald-400':'bg-slate-200'}`}></div>}
+      </React.Fragment>)}
+    </div>
+    <Card className="p-6 max-w-2xl">
+      {step===1&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Basic Information</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">First Name *</label><input value={f.fn} onChange={e=>set('fn',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">Last Name *</label><input value={f.ln} onChange={e=>set('ln',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">Age</label><input type="number" value={f.age} onChange={e=>set('age',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">Pronouns</label><select value={f.pronouns} onChange={e=>set('pronouns',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white">{['He/Him','She/Her','They/Them','He/They','She/They','Ask each time'].map(p=><option key={p}>{p}</option>)}</select></div>
+        </div>
+      </div>}
+      {step===2&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Caregiver / Guardian Information</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">Caregiver Name</label><input value={f.cgName} onChange={e=>set('cgName',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+          <div><label className="text-xs font-medium text-slate-500 block mb-1">Relationship</label><input value={f.cgRel} onChange={e=>set('cgRel',e.target.value)} placeholder="Mother, Father, Guardian..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+        </div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Phone Number</label><input value={f.cgPhone} onChange={e=>set('cgPhone',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Caregiver Notes</label><textarea value={f.cgNotes} onChange={e=>set('cgNotes',e.target.value)} placeholder="Anything important about the caregiver's role or communication style..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></div>
+      </div>}
+      {step===3&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Communication & Language</h2>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Communication Style</label><textarea value={f.comm} onChange={e=>set('comm',e.target.value)} placeholder="How does this person communicate best? Verbal, gestures, AAC device, picture cards..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Primary Language</label><input value={f.lang} onChange={e=>set('lang',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Verbal Ability</label><textarea value={f.verbal} onChange={e=>set('verbal',e.target.value)} placeholder="Describe verbal communication range and any changes under stress..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
+      </div>}
+      {step===4&&<div className="space-y-5"><h2 className="font-semibold text-slate-800 mb-4">Sensory Profile</h2>
+        {[{label:'Things to Avoid (Sensory Avoidances)',field:'avoid',inp:'aI',color:'bg-red-50 text-red-700 border-red-100',ph:'e.g. loud clippers — press Enter'},
+          {label:'Sensory Preferences',field:'pref',inp:'pI',color:'bg-emerald-50 text-emerald-700 border-emerald-100',ph:'e.g. warm water — press Enter'},
+          {label:'Calming Strategies',field:'calm',inp:'cI',color:'bg-blue-50 text-blue-700 border-blue-100',ph:'e.g. train videos — press Enter'}
+        ].map(({label,field,inp,color,ph})=><div key={field}>
+          <label className="text-xs font-medium text-slate-500 block mb-1">{label}</label>
+          <div className="flex flex-wrap gap-1 mb-2">{f[field].map(t=><span key={t} className={`chip border ${color}`}>{t} <button onClick={()=>rmTag(field,t)} className="ml-1 font-bold">×</button></span>)}</div>
+          <input value={f[inp]} onChange={e=>set(inp,e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag(field,inp);}}} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
+        </div>)}
+      </div>}
+      {step===5&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Grooming History & Visit Goals</h2>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Grooming History</label><textarea value={f.history} onChange={e=>set('history',e.target.value)} placeholder="Past grooming experiences — what has happened before? What worked or didn't?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Visit Goals</label><textarea value={f.goals} onChange={e=>set('goals',e.target.value)} placeholder="What does a successful visit look like for this client?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Staff Notes</label><textarea value={f.staffNotes} onChange={e=>set('staffNotes',e.target.value)} placeholder="Key information for the Experience Professional..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
+      </div>}
+      {step===6&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Emergency Notes & Consent</h2>
+        <div><label className="text-xs font-medium text-slate-500 block mb-1">Emergency Comfort Notes</label><textarea value={f.emergency} onChange={e=>set('emergency',e.target.value)} placeholder="What to do if the client reaches a distress point? Who to contact?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></div>
+        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+          <p className="text-xs text-slate-500 mb-3 leading-relaxed">The information collected in this form will be used to create a personalized Experience & Comfort Profile (ECP). This is an experience-supportive tool, not a clinical document.</p>
+          <label className="flex items-start gap-3 cursor-pointer"><input type="checkbox" checked={f.consent} onChange={e=>set('consent',e.target.checked)} className="mt-0.5 w-4 h-4"/><span className="text-sm text-slate-700 font-medium">I acknowledge and consent to this information being used to support this client's experience at Gifted Hands.</span></label>
+        </div>
+      </div>}
+      <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
+        <button onClick={()=>setStep(s=>Math.max(1,s-1))} disabled={step===1} className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-30">← Back</button>
+        <span className="text-xs text-slate-400">Step {step} of {steps.length}</span>
+        {step<6?<button onClick={()=>setStep(s=>Math.min(6,s+1))} className="px-5 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Continue →</button>
+          :<button onClick={save} disabled={!f.consent} className="px-5 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-40">Create ECP ✓</button>}
+      </div>
+    </Card>
+  </div>;
+};
+
+/* ── APPOINTMENTS ──────────────────────────────────────── */
+const ApptsPage=({appts})=>{
+  const[filter,setFilter]=useState('All');
+  const list=filter==='All'?appts:appts.filter(a=>a.status===filter);
+  return <div className="p-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Appointments</h1><p className="text-slate-500 text-sm mt-1">June 7, 2026 · {appts.length} total</p></div>
+    <div className="flex gap-2 mb-6">{['All','Pending','Arrived','In Progress','Completed'].map(s=><button key={s} onClick={()=>setFilter(s)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${filter===s?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{s}</button>)}</div>
+    <div className="space-y-2">{list.map(a=>{
+      const c=gc(a.cId),s=gs(a.sId);if(!c)return null;const[bg,fg]=avColors(c.id);
+      return <Card key={a.id} className="p-4 hover:border-indigo-200 transition-colors">
+        <div className="flex items-center gap-4">
+          <div className="text-sm font-semibold text-slate-600 w-20 flex-shrink-0">{a.time}</div>
+          <div className={`w-8 h-8 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xs font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
+          <div className="flex-1 min-w-0"><p className="font-semibold text-slate-800 text-sm">{c.firstName} {c.lastName}</p><p className="text-xs text-slate-500">{a.service} · {s?.name} · {a.dur} min</p></div>
+          <RiskBadge r={c.risk}/><StBadge s={a.status}/>
+          <div className="flex gap-2">
+            <a href={`#/clients/${c.id}`} className="text-xs bg-white text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-50 font-medium">ECP</a>
+            {a.status==='Pending'&&<a href={`#/clients/${c.id}/acc`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg px-2.5 py-1 hover:bg-indigo-100 font-medium">Check In</a>}
+            {a.status==='Completed'&&<a href={`#/appointments/${a.id}/notes`} className="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg px-2.5 py-1 hover:bg-emerald-100 font-medium">Notes</a>}
+          </div>
+        </div>
+      </Card>;
+    })}</div>
+  </div>;
+};
+
+/* ── POST-VISIT NOTES ──────────────────────────────────── */
+const NotesPage=({aId,appts,allNotes,onSave})=>{
+  const a=appts.find(x=>x.id===aId),ex=allNotes.find(n=>n.aId===aId),c=a?gc(a.cId):null;
+  const[f,setF]=useState({worked:ex?.worked||'',didnt:ex?.didnt||'',tI:'',triggers:ex?.triggers||[],toI:'',tools:ex?.tools||[],transR:ex?.transRating||0,comfR:ex?.comfortRating||0,changes:ex?.changes||'',cgFb:ex?.cgFeedback||'',returning:ex?.returning||'Yes'});
+  const[saved,setSaved]=useState(false);
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const addTag=(field,inp)=>{const v=f[inp].trim();if(v&&!f[field].includes(v))set(field,[...f[field],v]);set(inp,'');};
+  const rmTag=(field,v)=>set(field,f[field].filter(x=>x!==v));
+  const save=()=>{onSave({aId,cId:a?.cId,...f});setSaved(true);setTimeout(()=>setSaved(false),3000);};
+  if(!a||!c)return <div className="p-8 text-slate-500">Appointment not found.</div>;
+  return <div className="p-8">
+    <a href="#/appointments" className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to Appointments</a>
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Post-Visit Notes</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · {a.time} · {a.service}</p></div>
+    <div className="grid grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <Card className="p-5"><Lbl>What Worked Well</Lbl><textarea value={f.worked} onChange={e=>set('worked',e.target.value)} placeholder="Strategies, tools, and approaches that helped..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
+        <Card className="p-5"><Lbl>What Didn't Work</Lbl><textarea value={f.didnt} onChange={e=>set('didnt',e.target.value)} placeholder="Challenges encountered..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></Card>
+        <Card className="p-5"><Lbl>Triggers Observed</Lbl>
+          <div className="flex flex-wrap gap-1 mb-2">{f.triggers.map(t=><span key={t} className="chip bg-red-50 text-red-700 border border-red-100">{t} <button onClick={()=>rmTag('triggers',t)} className="ml-1">×</button></span>)}</div>
+          <input value={f.tI} onChange={e=>set('tI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('triggers','tI');}}} placeholder="Add trigger and press Enter..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
+        </Card>
+        <Card className="p-5"><Lbl>Calming Tools Used</Lbl>
+          <div className="flex flex-wrap gap-1 mb-2">{f.tools.map(t=><span key={t} className="chip bg-blue-50 text-blue-700 border border-blue-100">{t} <button onClick={()=>rmTag('tools',t)} className="ml-1">×</button></span>)}</div>
+          <input value={f.toI} onChange={e=>set('toI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('tools','toI');}}} placeholder="Add tool and press Enter..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
+        </Card>
+      </div>
+      <div className="space-y-4">
+        <Card className="p-5"><Lbl>Transition Success</Lbl><div className="mt-2"><Stars v={f.transR} onChange={v=>set('transR',v)}/></div></Card>
+        <Card className="p-5"><Lbl>Client Comfort Rating</Lbl><div className="mt-2"><Stars v={f.comfR} onChange={v=>set('comfR',v)}/></div></Card>
+        <Card className="p-5"><Lbl>Recommended Changes for Next Visit</Lbl><textarea value={f.changes} onChange={e=>set('changes',e.target.value)} placeholder="What should be different next time?" className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></Card>
+        <Card className="p-5"><Lbl>Caregiver Feedback</Lbl><textarea value={f.cgFb} onChange={e=>set('cgFb',e.target.value)} placeholder="What did the caregiver share after the visit?" className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></Card>
+        <Card className="p-5"><Lbl>Likely to Return?</Lbl>
+          <div className="flex gap-2 mt-2">{['Yes','Maybe','Needs Follow-up'].map(r=><button key={r} onClick={()=>set('returning',r)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${f.returning===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}</div>
+        </Card>
+        <button onClick={save} className="w-full bg-indigo-600 text-white rounded-lg py-3 text-sm font-semibold hover:bg-indigo-700">Save Post-Visit Notes</button>
+        {saved&&<div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm text-emerald-700 font-medium text-center">✓ Notes saved</div>}
+      </div>
+    </div>
+  </div>;
+};
+
+/* ── SSEP TEAM ─────────────────────────────────────────── */
+const SSEPPage=({appts})=>{
+  const[exp,setExp]=useState(null);
+  return <div className="p-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">SSEP Team</h1><p className="text-slate-500 text-sm mt-1">Sensory-Supportive Experience Professionals</p></div>
+    <div className="grid grid-cols-2 gap-4">{SSEPS.map(ssep=>{
+      const[bg,fg]=avColors(ssep.id);const myA=appts.filter(a=>a.sId===ssep.id);
+      return <Card key={ssep.id} className="p-6">
+        <div className="flex items-start gap-4 mb-4">
+          <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-sm font-bold ${fg}`}>{initials(ssep.name)}</span></div>
+          <div className="flex-1"><div className="flex items-center justify-between"><h3 className="font-semibold text-slate-800">{ssep.name}</h3><AvBadge a={ssep.availability}/></div><p className="text-xs text-slate-500 mt-0.5">{ssep.role}</p></div>
+        </div>
+        <p className="text-sm text-slate-600 mb-4 leading-relaxed">{ssep.bio}</p>
+        <div className="flex flex-wrap gap-1 mb-4">{ssep.skills.map(s=><span key={s} className="chip bg-indigo-50 text-indigo-600 border border-indigo-100">{s}</span>)}</div>
+        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+          <p className="text-xs text-slate-500">{myA.length} appointment{myA.length!==1?'s':''} today</p>
+          <button onClick={()=>setExp(exp===ssep.id?null:ssep.id)} className="text-xs text-indigo-600 font-medium hover:underline">{exp===ssep.id?'Hide schedule ↑':'View schedule ↓'}</button>
+        </div>
+        {exp===ssep.id&&<div className="mt-3 space-y-2">{myA.length===0?<p className="text-xs text-slate-400">No appointments today</p>:myA.map(a=>{const c=gc(a.cId);return c?<div key={a.id} className="flex items-center justify-between py-1.5 px-3 bg-slate-50 rounded-lg"><div><p className="text-xs font-medium text-slate-700">{a.time} · {c.firstName} {c.lastName}</p><p className="text-xs text-slate-400">{a.service}</p></div><StBadge s={a.status}/></div>:null;})}</div>}
+      </Card>;
+    })}</div>
+  </div>;
+};
+
+/* ── APP / ROUTER ──────────────────────────────────────── */
+function App(){
+  const[hash,setHash]=useState(window.location.hash||'#/');
+  const[appts,setAppts]=useState(APPTS_INIT);
+  const[notes,setNotes]=useState(NOTES_INIT);
+  const[extra,setExtra]=useState([]);
+  useEffect(()=>{const h=()=>setHash(window.location.hash||'#/');window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h);},[]);
+  const saveNote=n=>setNotes(ns=>{const i=ns.findIndex(x=>x.aId===n.aId);if(i>=0){const c=[...ns];c[i]=n;return c;}return[...ns,{id:'n'+Date.now(),...n}];});
+  const path=(hash.replace('#','')||'/');const parts=path.split('/').filter(Boolean);
+  let page;
+  if(parts.length===0||path==='/')page=<Dashboard appts={appts}/>;
+  else if(parts[0]==='clients'&&!parts[1])page=<ClientList extra={extra}/>;
+  else if(parts[0]==='clients'&&parts[1]&&!parts[2])page=<ECPPage cId={parts[1]} appts={appts}/>;
+  else if(parts[0]==='clients'&&parts[2]==='res')page=<RESPage cId={parts[1]}/>;
+  else if(parts[0]==='clients'&&parts[2]==='acc')page=<ACCPage cId={parts[1]}/>;
+  else if(parts[0]==='intake')page=<ICPSIntake onNew={c=>setExtra(p=>[...p,c])}/>;
+  else if(parts[0]==='appointments'&&!parts[1])page=<ApptsPage appts={appts}/>;
+  else if(parts[0]==='appointments'&&parts[2]==='notes')page=<NotesPage aId={parts[1]} appts={appts} allNotes={notes} onSave={saveNote}/>;
+  else if(parts[0]==='ssep')page=<SSEPPage appts={appts}/>;
+  else page=<div className="p-8 text-slate-500">Page not found. <a href="#/" className="text-indigo-600 hover:underline">Go home →</a></div>;
+  return <div className="flex min-h-screen bg-slate-50">
+    <Sidebar hash={hash}/>
+    <main className="flex-1 overflow-y-auto" style={{marginLeft:256}}>{page}</main>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
