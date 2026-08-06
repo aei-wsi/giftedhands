@@ -9,22 +9,206 @@
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f8fafc}
-.sidebar{background-color:#1e1b4b}
-.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:500;margin:2px}
-.emoji-btn{font-size:26px;cursor:pointer;padding:5px 8px;border-radius:10px;border:2px solid transparent;transition:all .15s}
-.emoji-btn.sel{border-color:#6366f1;background:#eef2ff}
-textarea{resize:vertical}
-input:focus,textarea:focus,select:focus{outline:2px solid #6366f1;outline-offset:1px}
+/* ── Design tokens ── */
+:root {
+  --sb: #1a2835;
+  --sb-text: #8fb8c4;
+  --sb-hover: rgba(255,255,255,0.055);
+  --sb-active-bg: rgba(184,115,42,0.14);
+  --sb-active-text: #f5dbb8;
+  --sb-border: rgba(255,255,255,0.08);
+  --sb-label: rgba(143,184,196,0.55);
+
+  --accent: #b8732a;
+  --accent-h: #9d611e;
+  --accent-text: #fff;
+  --accent-light: #fdf3e9;
+  --accent-border: #f0d0a0;
+  --accent-muted: #7a4d1e;
+
+  --bg: #f5f3f0;
+  --surface: #ffffff;
+  --border: #e4dfd8;
+  --border-light: #ede9e3;
+  --text: #1c1917;
+  --text-muted: #6b6560;
+  --text-faint: #a09890;
+  --text-link: #b8732a;
+
+  --risk-h: #b91c1c;
+  --risk-h-bg: #fef2f0;
+  --risk-h-border: #fca5a5;
+  --risk-m: #92400e;
+  --risk-m-bg: #fffbeb;
+  --risk-m-border: #fcd34d;
+  --risk-l: #166534;
+  --risk-l-bg: #f0fdf4;
+  --risk-l-border: #86efac;
+
+  --st-arrived: #1e40af;
+  --st-arrived-bg: #eff6ff;
+  --st-arrived-border: #93c5fd;
+  --st-prog: #6d28d9;
+  --st-prog-bg: #f5f3ff;
+  --st-prog-border: #c4b5fd;
+  --st-done: #166534;
+  --st-done-bg: #f0fdf4;
+  --st-done-border: #86efac;
+  --st-pend-text: #6b6560;
+  --st-pend-bg: #f5f3f0;
+  --st-pend-border: #d4cfc8;
+
+  --avail-yes: #166534;
+  --avail-yes-bg: #f0fdf4;
+  --avail-busy: #92400e;
+  --avail-busy-bg: #fffbeb;
+
+  --shadow-sm: 0 1px 2px rgba(28,25,23,0.06), 0 1px 4px rgba(28,25,23,0.04);
+  --shadow: 0 2px 8px rgba(28,25,23,0.08), 0 1px 3px rgba(28,25,23,0.05);
+  --shadow-md: 0 4px 16px rgba(28,25,23,0.1), 0 2px 6px rgba(28,25,23,0.06);
+}
+
+@media (prefers-color-scheme: dark) { :root {
+  --bg: #13110f;
+  --surface: #1d1a17;
+  --border: #2c2820;
+  --border-light: #26221c;
+  --text: #ede9e3;
+  --text-muted: #9a948c;
+  --text-faint: #56524d;
+  --text-link: #d4924a;
+  --accent: #c8832a;
+  --accent-light: #271a0a;
+  --accent-border: #4a3010;
+  --risk-h-bg: #2a0a0a; --risk-h-border: #7f1d1d;
+  --risk-m-bg: #221506; --risk-m-border: #78350f;
+  --risk-l-bg: #0a1f0d; --risk-l-border: #14532d;
+  --st-arrived-bg: #0c1624; --st-arrived-border: #1e3a5f;
+  --st-prog-bg: #16102a; --st-prog-border: #4c1d95;
+  --st-done-bg: #0a1f0d; --st-done-border: #14532d;
+  --st-pend-bg: #1a1712; --st-pend-border: #2c2820;
+  --avail-yes-bg: #0a1f0d; --avail-busy-bg: #221506;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3); --shadow: 0 2px 8px rgba(0,0,0,0.3); --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+}}
+:root[data-theme="light"] {
+  --bg: #f5f3f0; --surface: #ffffff; --border: #e4dfd8; --border-light: #ede9e3;
+  --text: #1c1917; --text-muted: #6b6560; --text-faint: #a09890; --text-link: #b8732a;
+  --accent: #b8732a; --accent-light: #fdf3e9; --accent-border: #f0d0a0;
+  --risk-h-bg: #fef2f0; --risk-h-border: #fca5a5;
+  --risk-m-bg: #fffbeb; --risk-m-border: #fcd34d;
+  --risk-l-bg: #f0fdf4; --risk-l-border: #86efac;
+}
+:root[data-theme="dark"] {
+  --bg: #13110f; --surface: #1d1a17; --border: #2c2820; --border-light: #26221c;
+  --text: #ede9e3; --text-muted: #9a948c; --text-faint: #56524d; --text-link: #d4924a;
+  --accent: #c8832a; --accent-light: #271a0a; --accent-border: #4a3010;
+  --risk-h-bg: #2a0a0a; --risk-h-border: #7f1d1d;
+  --risk-m-bg: #221506; --risk-m-border: #78350f;
+  --risk-l-bg: #0a1f0d; --risk-l-border: #14532d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Sidebar ── */
+.sb { background: var(--sb); position: fixed; left: 0; top: 0; height: 100vh; width: 240px; display: flex; flex-direction: column; z-index: 40; }
+.sb-logo { padding: 20px 18px 18px; border-bottom: 1px solid var(--sb-border); display: flex; align-items: center; gap: 12px; }
+.sb-logo-mark { width: 34px; height: 34px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.sb-logo-name { font-size: 13px; font-weight: 600; color: #e8f0f4; letter-spacing: -0.01em; line-height: 1.2; }
+.sb-logo-sub { font-size: 10px; color: var(--sb-text); letter-spacing: 0.04em; margin-top: 1px; }
+.sb-nav { flex: 1; padding: 16px 10px; overflow-y: auto; }
+.sb-nav-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sb-label); padding: 0 10px; margin-bottom: 8px; display: block; }
+.sb-link { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--sb-text); text-decoration: none; transition: background 0.12s, color 0.12s; border-left: 2px solid transparent; margin-bottom: 1px; position: relative; }
+.sb-link:hover { background: var(--sb-hover); color: #e8f0f4; }
+.sb-link.active { background: var(--sb-active-bg); color: var(--sb-active-text); border-left-color: var(--accent); font-weight: 600; }
+.sb-link-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; opacity: 0.85; }
+.sb-footer { padding: 14px 14px 16px; border-top: 1px solid var(--sb-border); }
+.sb-modules { background: rgba(255,255,255,0.045); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; }
+.sb-modules-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sb-label); margin-bottom: 4px; }
+.sb-modules-list { font-size: 11px; color: var(--sb-text); opacity: 0.7; letter-spacing: 0.02em; }
+.sb-disclaimer { font-size: 10px; color: var(--sb-text); opacity: 0.45; line-height: 1.5; }
+
+/* ── Chips ── */
+.chip { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; margin: 2px; line-height: 1.6; letter-spacing: 0.01em; border: 1px solid transparent; }
+
+/* ── Emoji mood ── */
+.emoji-btn { font-size: 26px; cursor: pointer; padding: 5px 7px; border-radius: 8px; border: 2px solid transparent; transition: all .12s; background: transparent; }
+.emoji-btn.sel { border-color: var(--accent); background: var(--accent-light); }
+
+/* ── Cards ── */
+.card { background: var(--surface); border-radius: 10px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.card:hover.card-hover { border-color: var(--accent-border); box-shadow: var(--shadow); }
+
+/* ── Buttons ── */
+.btn-accent { background: var(--accent); color: #fff; border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: background 0.12s; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-accent:hover { background: var(--accent-h); }
+.btn-outline { background: var(--surface); color: var(--accent); border: 1px solid var(--accent-border); border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.12s; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-outline:hover { background: var(--accent-light); }
+.btn-ghost { background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.12s; text-decoration: none; display: inline-flex; align-items: center; }
+.btn-ghost:hover { background: var(--bg); }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+
+/* ── Form inputs ── */
+.field { width: 100%; border: 1px solid var(--border); border-radius: 7px; padding: 8px 12px; font-size: 13px; background: var(--surface); color: var(--text); font-family: inherit; transition: border-color 0.12s; }
+.field:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+textarea.field { resize: vertical; }
+
+/* ── Labels ── */
+.lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; display: block; }
+
+/* ── Headings with warm serif ── */
+.page-title { font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; font-size: 24px; font-weight: 700; letter-spacing: -0.015em; color: var(--text); line-height: 1.25; text-wrap: balance; }
+.section-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: var(--border-light); margin: 12px 0; }
+
+/* ── Stars ── */
+.star { font-size: 18px; cursor: pointer; transition: transform 0.1s; }
+.star:hover { transform: scale(1.2); }
+
+/* ── Toggle filter buttons ── */
+.filter-btn { padding: 6px 13px; border-radius: 6px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; transition: all 0.12s; }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.filter-btn:not(.active):hover { border-color: var(--accent-border); color: var(--accent); }
+
+/* ── Success/warning banners ── */
+.banner-warn { background: var(--risk-m-bg); border: 1px solid var(--risk-m-border); border-radius: 9px; padding: 14px 16px; display: flex; gap: 12px; }
+.banner-success { background: var(--risk-l-bg); border: 1px solid var(--risk-l-border); border-radius: 9px; padding: 12px 14px; font-size: 12px; color: var(--risk-l); font-weight: 500; text-align: center; }
+
+/* ── Step progress ── */
+.step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.step-dot.done { background: var(--risk-l); color: #fff; }
+.step-dot.current { background: var(--accent); color: #fff; }
+.step-dot.todo { background: var(--border); color: var(--text-faint); }
+.step-label { font-size: 11px; font-weight: 500; }
+.step-line { flex: 1; height: 2px; }
+.step-line.done { background: var(--risk-l); }
+.step-line.todo { background: var(--border); }
+
+/* ── Avatar ── */
+.avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700; }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect}=React;
+const {useState, useEffect} = React;
 
-/* ── MOCK DATA ─────────────────────────────────────────── */
-const SSEPS=[
+/* ── MOCK DATA ── */
+const SSEPS = [
   {id:'ssep-1',name:'Jordan M.',role:'Primary Experience Professional',availability:'Busy',
    skills:['non-verbal support','child-friendly pacing','scissor-only comfort','visual schedule use'],
    bio:'Jordan specializes in younger clients who need extra time and quiet environments.',appts:['appt-1','appt-3']},
@@ -39,7 +223,7 @@ const SSEPS=[
    bio:"Sam uses interest-based engagement strategies and has a gift for building trust.",appts:['appt-6']},
 ];
 
-const CLIENTS=[
+const CLIENTS = [
   {id:'client-1',firstName:'Aiden',lastName:'Thompson',age:8,pronouns:'He/Him',risk:'Moderate',lastVisit:'May 10, 2026',isNew:false,
    tags:['train enthusiast','returning client','visual supports'],
    cg:{name:'Tiffany Thompson',rel:'Mother',phone:'(512) 555-0178',notes:'Very engaged. Brings train book each visit.'},
@@ -127,7 +311,7 @@ const CLIENTS=[
      ssepRec:'Any SSEP — Jordan M. preferred for continuity.'}},
 ];
 
-const APPTS_INIT=[
+const APPTS_INIT = [
   {id:'appt-1',cId:'client-1',sId:'ssep-1',time:'9:00 AM',status:'Completed',service:'Haircut + Comfort Assessment',dur:45,
    acc:{mood:4,cgNotes:'Brought new train book. Ready to try hair wash today.',sensory:'Good',ready:'Yes',delay:0}},
   {id:'appt-2',cId:'client-3',sId:'ssep-2',time:'10:00 AM',status:'Arrived',service:'Haircut',dur:30,
@@ -139,7 +323,7 @@ const APPTS_INIT=[
   {id:'appt-6',cId:'client-1',sId:'ssep-4',time:'4:00 PM',status:'Pending',service:'Follow-up Check-In',dur:20,acc:null},
 ];
 
-const NOTES_INIT=[
+const NOTES_INIT = [
   {id:'note-1',aId:'appt-1',cId:'client-1',
    worked:'Train book engagement was excellent. Hair wash introduced successfully — first time ever. Counting steps aloud kept him regulated.',
    didnt:'Slight escalation when clipper guard slipped near ear. Recovered quickly with counting strategy.',
@@ -150,425 +334,880 @@ const NOTES_INIT=[
    returning:'Yes'}
 ];
 
-/* ── HELPERS ───────────────────────────────────────────── */
-const gc=id=>CLIENTS.find(c=>c.id===id);
-const gs=id=>SSEPS.find(s=>s.id===id);
-const initials=n=>{const p=n.trim().split(' ');return(p[0][0]+(p[1]?.[0]||'')).toUpperCase()};
-const avColors=id=>{const c=[['bg-indigo-100','text-indigo-700'],['bg-purple-100','text-purple-700'],['bg-emerald-100','text-emerald-700'],['bg-rose-100','text-rose-700'],['bg-amber-100','text-amber-700']];const i=parseInt(id.replace(/\D/g,''))%5;return c[i]};
+/* ── HELPERS ── */
+const gc = id => CLIENTS.find(c => c.id === id);
+const gs = id => SSEPS.find(s => s.id === id);
+const initials = n => { const p = n.trim().split(' '); return (p[0][0] + (p[1]?.[0] || '')).toUpperCase(); };
 
-/* ── UI ATOMS ──────────────────────────────────────────── */
-const RiskBadge=({r})=>{const m={High:'bg-red-100 text-red-700 border-red-200',Moderate:'bg-amber-100 text-amber-700 border-amber-200',Low:'bg-emerald-100 text-emerald-700 border-emerald-200'};return <span className={`chip border ${m[r]||'bg-slate-100 text-slate-500'}`}>{r} Risk</span>};
-const StBadge=({s})=>{const m={Arrived:'bg-blue-100 text-blue-700 border-blue-200','In Progress':'bg-purple-100 text-purple-700 border-purple-200',Completed:'bg-emerald-100 text-emerald-700 border-emerald-200',Pending:'bg-slate-100 text-slate-500 border-slate-200'};return <span className={`chip border ${m[s]||'bg-slate-100'}`}>{s}</span>};
-const AvBadge=({a})=>{const m={Available:'bg-emerald-100 text-emerald-700',Busy:'bg-amber-100 text-amber-700',Off:'bg-red-100 text-red-600'};return <span className={`chip ${m[a]||''}`}>{a}</span>};
-const Card=({children,className='',onClick})=><div onClick={onClick} className={`bg-white rounded-xl border border-slate-200 shadow-sm ${className}`}>{children}</div>;
-const Lbl=({children})=><p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{children}</p>;
-const Stars=({v,onChange})=><div className="flex gap-1">{[1,2,3,4,5].map(n=><span key={n} onClick={()=>onChange&&onChange(n)} style={{cursor:onChange?'pointer':'default',color:n<=v?'#f59e0b':'#d1d5db',fontSize:20}}>★</span>)}</div>;
+const AVATAR_PALETTES = [
+  {bg:'#e8f4f8',text:'#1a5e75'},
+  {bg:'#f0ede8',text:'#5a3e1e'},
+  {bg:'#ecf5ee',text:'#1e5a34'},
+  {bg:'#f5ecf0',text:'#6b1e40'},
+  {bg:'#f0ecf5',text:'#3d1e6b'},
+];
+const avatarColors = id => AVATAR_PALETTES[parseInt(id.replace(/\D/g,'')) % 5];
 
-/* ── SIDEBAR ───────────────────────────────────────────── */
-const Sidebar=({hash})=>{
-  const items=[
-    {h:'#/',l:'Dashboard',i:'⊞'},{h:'#/clients',l:'Client Profiles',i:'👤'},
-    {h:'#/appointments',l:'Appointments',i:'📅'},{h:'#/intake',l:'New Client (ICPS)',i:'➕'},
-    {h:'#/ssep',l:'SSEP Team',i:'⭐'},
-  ];
-  return <aside className="sidebar fixed left-0 top-0 h-screen w-64 flex flex-col z-40">
-    <div className="px-5 py-5 border-b border-indigo-900">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white text-lg flex-shrink-0">♡</div>
-        <div><p className="text-white font-semibold text-sm">Gifted Hands</p><p className="text-indigo-300 text-xs">Experience System</p></div>
-      </div>
-    </div>
-    <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-      <p className="text-indigo-400 text-xs font-semibold uppercase tracking-wider px-3 mb-3">Navigation</p>
-      {items.map(({h,l,i})=>{
-        const active=h==='#/'?hash==='#/':hash.startsWith(h);
-        return <a key={h} href={h} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${active?'bg-indigo-600 text-white':'text-indigo-200 hover:bg-indigo-900 hover:text-white'}`}><span className="text-base">{i}</span>{l}</a>;
-      })}
-    </nav>
-    <div className="px-4 py-4 border-t border-indigo-900">
-      <div className="bg-indigo-900 rounded-lg px-3 py-2.5 mb-3">
-        <p className="text-indigo-300 text-xs font-semibold mb-1">System Modules</p>
-        <p className="text-indigo-400 text-xs">ECP · ICPS · RES · ACC</p>
-      </div>
-      <p className="text-indigo-500 text-xs leading-relaxed">Gifted Hands Experience System is an experience-supportive workflow tool. It is not a clinical diagnostic, therapy, or treatment platform.</p>
-    </div>
-  </aside>;
+/* ── UI ATOMS ── */
+const RiskBadge = ({r}) => {
+  const m = {
+    High:     {bg:'var(--risk-h-bg)',    color:'var(--risk-h)',    border:'var(--risk-h-border)'},
+    Moderate: {bg:'var(--risk-m-bg)',    color:'var(--risk-m)',    border:'var(--risk-m-border)'},
+    Low:      {bg:'var(--risk-l-bg)',    color:'var(--risk-l)',    border:'var(--risk-l-border)'},
+  };
+  const s = m[r] || {bg:'var(--bg)',color:'var(--text-muted)',border:'var(--border)'};
+  return <span className="chip" style={{background:s.bg,color:s.color,borderColor:s.border}}>{r} Risk</span>;
 };
 
-/* ── DASHBOARD ─────────────────────────────────────────── */
-const Dashboard=({appts})=>{
-  const total=appts.length,active=appts.filter(a=>a.status==='Arrived'||a.status==='In Progress').length,
-        done=appts.filter(a=>a.status==='Completed').length,pending=appts.filter(a=>a.status==='Pending').length;
-  const highPending=appts.filter(a=>gc(a.cId)?.risk==='High'&&a.status==='Pending');
-  const stats=[
-    {l:"Today's Appointments",v:total,c:'text-indigo-600'},{l:'Checked In / In Progress',v:active,c:'text-blue-600'},
-    {l:'Completed',v:done,c:'text-emerald-600'},{l:'Pending',v:pending,c:'text-amber-600'},
+const StBadge = ({s}) => {
+  const m = {
+    Arrived:     {bg:'var(--st-arrived-bg)',   color:'var(--st-arrived)',  border:'var(--st-arrived-border)'},
+    'In Progress':{bg:'var(--st-prog-bg)',      color:'var(--st-prog)',     border:'var(--st-prog-border)'},
+    Completed:   {bg:'var(--st-done-bg)',       color:'var(--st-done)',     border:'var(--st-done-border)'},
+    Pending:     {bg:'var(--st-pend-bg)',       color:'var(--st-pend-text)',border:'var(--st-pend-border)'},
+  };
+  const st = m[s] || {bg:'var(--bg)',color:'var(--text-muted)',border:'var(--border)'};
+  return <span className="chip" style={{background:st.bg,color:st.color,borderColor:st.border}}>{s}</span>;
+};
+
+const AvBadge = ({a}) => {
+  const m = {
+    Available:{bg:'var(--avail-yes-bg)',color:'var(--avail-yes)',border:'var(--risk-l-border)'},
+    Busy:     {bg:'var(--avail-busy-bg)',color:'var(--avail-busy)',border:'var(--risk-m-border)'},
+  };
+  const s = m[a] || {bg:'var(--bg)',color:'var(--text-muted)',border:'var(--border)'};
+  return <span className="chip" style={{background:s.bg,color:s.color,borderColor:s.border}}>{a}</span>;
+};
+
+const Lbl = ({children}) => <span className="lbl">{children}</span>;
+
+const Stars = ({v, onChange}) => (
+  <div className="flex gap-1">
+    {[1,2,3,4,5].map(n => (
+      <span key={n} className="star" onClick={() => onChange && onChange(n)}
+        style={{color: n <= v ? '#b8732a' : 'var(--border)', cursor: onChange ? 'pointer' : 'default'}}>★</span>
+    ))}
+  </div>
+);
+
+const Avatar = ({name, id, size=40}) => {
+  const {bg, text} = avatarColors(id);
+  return (
+    <div className="avatar" style={{width:size,height:size,background:bg,color:text,fontSize:size*0.3,flexShrink:0}}>
+      {initials(name)}
+    </div>
+  );
+};
+
+/* ── SIDEBAR ── */
+const Sidebar = ({hash}) => {
+  const items = [
+    {h:'#/',     l:'Dashboard',        i:'▦'},
+    {h:'#/clients',  l:'Client Profiles',  i:'◉'},
+    {h:'#/appointments',l:'Appointments', i:'◫'},
+    {h:'#/intake',   l:'New Client (ICPS)',i:'＋'},
+    {h:'#/ssep',     l:'SSEP Team',        i:'◈'},
   ];
-  return <div className="p-8">
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Welcome, Jordan M. 👋</h1><p className="text-slate-500 text-sm mt-1">Today's Schedule — June 7, 2026 · {total} appointments</p></div>
-    <div className="grid grid-cols-4 gap-4 mb-8">{stats.map(s=><Card key={s.l} className="p-5"><div className={`text-3xl font-bold mb-1 ${s.c}`}>{s.v}</div><div className="text-xs text-slate-500 font-medium">{s.l}</div></Card>)}</div>
-    {highPending.length>0&&<div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex gap-3">
-      <span className="text-lg mt-0.5">⚠️</span>
-      <div><p className="font-semibold text-amber-800 text-sm">High-Support Clients Incoming</p>
-        <p className="text-amber-700 text-sm mt-0.5">Review ECPs and RES setups before these arrivals.</p>
-        <div className="flex gap-2 mt-2">{highPending.map(a=>{const c=gc(a.cId);return c?<a key={a.id} href={`#/clients/${c.id}/res`} className="text-xs bg-amber-100 text-amber-800 border border-amber-200 rounded-lg px-2.5 py-1 hover:bg-amber-200 font-medium">Review {c.firstName}'s RES →</a>:null})}</div>
-      </div>
-    </div>}
-    <div className="flex items-center justify-between mb-4"><h2 className="text-base font-semibold text-slate-800">Today's Schedule</h2><a href="#/appointments" className="text-xs text-indigo-600 font-medium hover:underline">View all →</a></div>
-    <div className="space-y-2">{appts.map(a=>{
-      const c=gc(a.cId),s=gs(a.sId);if(!c)return null;
-      const[bg,fg]=avColors(c.id);
-      return <Card key={a.id} className="hover:border-indigo-200 transition-colors">
-        <div className="flex items-center gap-4 p-4">
-          <div className="text-sm font-semibold text-slate-600 w-20 flex-shrink-0">{a.time}</div>
-          <div className={`w-9 h-9 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xs font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
-          <div className="flex-1 min-w-0"><p className="font-semibold text-slate-800 text-sm">{c.firstName} {c.lastName}</p><p className="text-xs text-slate-500">{a.service} · {s?.name}</p></div>
-          <div className="flex items-center gap-2 flex-shrink-0"><RiskBadge r={c.risk}/><StBadge s={a.status}/></div>
-          <div className="flex gap-2 flex-shrink-0">
-            {a.status==='Pending'&&<a href={`#/clients/${c.id}/acc`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg px-2.5 py-1 hover:bg-indigo-100 font-medium">Check In</a>}
-            {a.status==='Completed'&&<a href={`#/appointments/${a.id}/notes`} className="text-xs bg-slate-50 text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-100 font-medium">Notes</a>}
-            <a href={`#/clients/${c.id}`} className="text-xs bg-white text-slate-500 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-50 font-medium">View ECP</a>
-          </div>
+  return (
+    <aside className="sb">
+      <div className="sb-logo">
+        <div className="sb-logo-mark">♡</div>
+        <div>
+          <div className="sb-logo-name">Gifted Hands</div>
+          <div className="sb-logo-sub">Experience System</div>
         </div>
-      </Card>;
-    })}</div>
-  </div>;
+      </div>
+      <nav className="sb-nav">
+        <span className="sb-nav-label">Navigation</span>
+        {items.map(({h,l,i}) => {
+          const active = h === '#/' ? (hash === '#/' || hash === '#' || hash === '') : hash.startsWith(h);
+          return (
+            <a key={h} href={h} className={`sb-link ${active ? 'active' : ''}`}>
+              <span className="sb-link-icon">{i}</span>
+              {l}
+            </a>
+          );
+        })}
+      </nav>
+      <div className="sb-footer">
+        <div className="sb-modules">
+          <div className="sb-modules-label">System Modules</div>
+          <div className="sb-modules-list">ECP · ICPS · RES · ACC</div>
+        </div>
+        <div className="sb-disclaimer">
+          Gifted Hands Experience System is an experience-supportive workflow tool. It is not a clinical diagnostic, therapy, or treatment platform.
+        </div>
+      </div>
+    </aside>
+  );
 };
 
-/* ── CLIENTS LIST ──────────────────────────────────────── */
-const ClientList=({extra})=>{
-  const all=[...CLIENTS,...extra];
-  const[q,setQ]=useState('');const[rf,setRf]=useState('All');
-  const filtered=all.filter(c=>{
-    const m=!q||`${c.firstName} ${c.lastName}`.toLowerCase().includes(q.toLowerCase())||c.tags.some(t=>t.toLowerCase().includes(q.toLowerCase()));
-    return m&&(rf==='All'||c.risk===rf);
-  });
-  return <div className="p-8">
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Client Profiles</h1><p className="text-slate-500 text-sm mt-1">{all.length} clients</p></div>
-    <div className="flex gap-3 mb-6">
-      <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search by name or tag..." className="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm bg-white"/>
-      {['All','Low','Moderate','High'].map(r=><button key={r} onClick={()=>setRf(r)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${rf===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}
-    </div>
-    <div className="grid grid-cols-2 gap-4">
-      {filtered.map(c=>{const[bg,fg]=avColors(c.id);return <Card key={c.id} className="p-5 hover:border-indigo-200 transition-colors cursor-pointer" onClick={()=>window.location.hash=`#/clients/${c.id}`}>
-        <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-sm font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2"><h3 className="font-semibold text-slate-800">{c.firstName} {c.lastName}</h3><RiskBadge r={c.risk}/></div>
-            <p className="text-xs text-slate-500 mt-0.5">Age {c.age} · {c.pronouns}</p>
-            <div className="flex flex-wrap gap-1 mt-2">{c.tags.map(t=><span key={t} className="chip bg-indigo-50 text-indigo-600 border border-indigo-100">{t}</span>)}</div>
-            <div className="flex items-center justify-between mt-3">
-              <p className="text-xs text-slate-400">{c.lastVisit?`Last visit: ${c.lastVisit}`:'No previous visits'}</p>
-              <a href={`#/clients/${c.id}`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-lg px-2.5 py-1 font-medium hover:bg-indigo-100">View ECP →</a>
+/* ── DASHBOARD ── */
+const Dashboard = ({appts}) => {
+  const total = appts.length;
+  const active = appts.filter(a => a.status === 'Arrived' || a.status === 'In Progress').length;
+  const done = appts.filter(a => a.status === 'Completed').length;
+  const pending = appts.filter(a => a.status === 'Pending').length;
+  const highPending = appts.filter(a => gc(a.cId)?.risk === 'High' && a.status === 'Pending');
+
+  const stats = [
+    {l:"Today's Appointments", v:total},
+    {l:'Checked In / Active',  v:active},
+    {l:'Completed',            v:done},
+    {l:'Pending',              v:pending},
+  ];
+
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{marginBottom:24}}>
+        <h1 className="page-title">Welcome, Jordan M.</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>Today's Schedule — June 7, 2026 · {total} appointments</p>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
+        {stats.map((s,i) => (
+          <div key={s.l} className="card" style={{padding:'18px 20px'}}>
+            <div style={{fontSize:30,fontWeight:700,color:i===0?'var(--accent)':i===1?'var(--st-prog)':i===2?'var(--risk-l)':'var(--text-muted)',fontVariantNumeric:'tabular-nums',lineHeight:1.1,marginBottom:4}}>{s.v}</div>
+            <div style={{fontSize:11,color:'var(--text-muted)',fontWeight:500,lineHeight:1.3}}>{s.l}</div>
+          </div>
+        ))}
+      </div>
+
+      {highPending.length > 0 && (
+        <div className="banner-warn" style={{marginBottom:20}}>
+          <span style={{fontSize:16,marginTop:2,flexShrink:0}}>⚠</span>
+          <div>
+            <p style={{fontWeight:600,color:'var(--risk-m)',fontSize:13,margin:0}}>High-Support Clients Incoming</p>
+            <p style={{color:'var(--risk-m)',fontSize:12,marginTop:3,marginBottom:8}}>Review ECPs and RES setups before these arrivals.</p>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              {highPending.map(a => {
+                const c = gc(a.cId);
+                return c ? (
+                  <a key={a.id} href={`#/clients/${c.id}/res`} className="btn-ghost btn-sm" style={{fontSize:11}}>
+                    Review {c.firstName}'s RES →
+                  </a>
+                ) : null;
+              })}
             </div>
           </div>
         </div>
-      </Card>;})}
+      )}
+
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+        <span className="section-title">Today's Schedule</span>
+        <a href="#/appointments" style={{fontSize:11,color:'var(--text-link)',fontWeight:600,textDecoration:'none'}}>View all →</a>
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:6}}>
+        {appts.map(a => {
+          const c = gc(a.cId), s = gs(a.sId);
+          if (!c) return null;
+          return (
+            <div key={a.id} className="card" style={{padding:'14px 16px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:14}}>
+                <div style={{fontSize:13,fontWeight:600,color:'var(--text-muted)',width:72,flexShrink:0,fontVariantNumeric:'tabular-nums'}}>{a.time}</div>
+                <Avatar name={`${c.firstName} ${c.lastName}`} id={c.id} size={36} />
+                <div style={{flex:1,minWidth:0}}>
+                  <p style={{fontWeight:600,color:'var(--text)',fontSize:13,margin:0}}>{c.firstName} {c.lastName}</p>
+                  <p style={{fontSize:11,color:'var(--text-muted)',margin:'2px 0 0'}}>{a.service} · {s?.name}</p>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:6,flexShrink:0}}>
+                  <RiskBadge r={c.risk} />
+                  <StBadge s={a.status} />
+                </div>
+                <div style={{display:'flex',gap:6,flexShrink:0}}>
+                  {a.status === 'Pending' && <a href={`#/clients/${c.id}/acc`} className="btn-outline btn-sm">Check In</a>}
+                  {a.status === 'Completed' && <a href={`#/appointments/${a.id}/notes`} className="btn-ghost btn-sm">Notes</a>}
+                  <a href={`#/clients/${c.id}`} className="btn-ghost btn-sm">ECP</a>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
-    {filtered.length===0&&<div className="text-center py-16 text-slate-400"><p className="text-3xl mb-2">🔍</p><p className="font-medium">No clients match your search</p></div>}
-  </div>;
+  );
 };
 
-/* ── ECP PAGE ──────────────────────────────────────────── */
-const ECPPage=({cId,appts})=>{
-  const c=gc(cId);if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
-  const{ecp,res,cg}=c;const[bg,fg]=avColors(c.id);
-  const myAppts=appts.filter(a=>a.cId===cId);
-  return <div className="p-8">
-    <a href="#/clients" className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to Clients</a>
-    <Card className="p-6 mb-6"><div className="flex items-start gap-5">
-      <div className={`w-16 h-16 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xl font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
-      <div className="flex-1">
-        <div className="flex items-start gap-3 flex-wrap"><h1 className="text-2xl font-bold text-slate-800">{c.firstName} {c.lastName}</h1><RiskBadge r={c.risk}/>{c.isNew&&<span className="chip bg-purple-100 text-purple-700 border border-purple-200">New Client</span>}</div>
-        <p className="text-slate-500 text-sm mt-1">Age {c.age} · {c.pronouns} · {c.lastVisit?`Last visit: ${c.lastVisit}`:'No previous visits'}</p>
-        <div className="flex flex-wrap gap-1 mt-2">{c.tags.map(t=><span key={t} className="chip bg-slate-100 text-slate-600">{t}</span>)}</div>
+/* ── CLIENT LIST ── */
+const ClientList = ({extra}) => {
+  const all = [...CLIENTS, ...extra];
+  const [q, setQ] = useState('');
+  const [rf, setRf] = useState('All');
+  const filtered = all.filter(c => {
+    const m = !q || `${c.firstName} ${c.lastName}`.toLowerCase().includes(q.toLowerCase()) || c.tags.some(t => t.toLowerCase().includes(q.toLowerCase()));
+    return m && (rf === 'All' || c.risk === rf);
+  });
+
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{marginBottom:24}}>
+        <h1 className="page-title">Client Profiles</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>{all.length} clients</p>
       </div>
-      <div className="flex gap-2">
-        <a href={`#/clients/${cId}/acc`} className="text-xs bg-indigo-600 text-white rounded-lg px-3 py-2 font-medium hover:bg-indigo-700">ACC Check-In</a>
-        <a href={`#/clients/${cId}/res`} className="text-xs bg-white text-indigo-600 border border-indigo-200 rounded-lg px-3 py-2 font-medium hover:bg-indigo-50">View RES</a>
+
+      <div style={{display:'flex',gap:8,marginBottom:20,alignItems:'center'}}>
+        <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search by name or tag…"
+          className="field" style={{flex:1}} />
+        {['All','Low','Moderate','High'].map(r => (
+          <button key={r} className={`filter-btn ${rf === r ? 'active' : ''}`} onClick={() => setRf(r)}>{r}</button>
+        ))}
       </div>
-    </div></Card>
-    <div className="grid grid-cols-3 gap-6">
-      <div className="col-span-2 space-y-4">
-        <Card className="p-5"><Lbl>Communication Style</Lbl><p className="text-sm text-slate-700">{ecp.comm}</p></Card>
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="p-5"><Lbl>Sensory Avoidances</Lbl><div className="flex flex-wrap">{ecp.avoid.map(s=><span key={s} className="chip bg-red-50 text-red-700 border border-red-100">{s}</span>)}</div></Card>
-          <Card className="p-5"><Lbl>Sensory Preferences</Lbl><div className="flex flex-wrap">{ecp.pref.map(s=><span key={s} className="chip bg-emerald-50 text-emerald-700 border border-emerald-100">{s}</span>)}</div></Card>
+
+      <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}}>
+        {filtered.map(c => (
+          <div key={c.id} className="card" style={{padding:'18px 20px',cursor:'pointer'}}
+            onClick={() => window.location.hash = `#/clients/${c.id}`}>
+            <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+              <Avatar name={`${c.firstName} ${c.lastName}`} id={c.id} size={44} />
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8,marginBottom:3}}>
+                  <h3 style={{fontWeight:600,fontSize:14,margin:0,color:'var(--text)'}}>{c.firstName} {c.lastName}</h3>
+                  <RiskBadge r={c.risk} />
+                </div>
+                <p style={{fontSize:11,color:'var(--text-muted)',margin:'0 0 8px'}}>Age {c.age} · {c.pronouns}</p>
+                <div style={{display:'flex',flexWrap:'wrap'}}>
+                  {c.tags.map(t => (
+                    <span key={t} className="chip" style={{background:'var(--accent-light)',color:'var(--accent-muted)',borderColor:'var(--accent-border)'}}>{t}</span>
+                  ))}
+                </div>
+                <div className="divider" />
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                  <p style={{fontSize:11,color:'var(--text-faint)',margin:0}}>{c.lastVisit ? `Last visit: ${c.lastVisit}` : 'No previous visits'}</p>
+                  <a href={`#/clients/${c.id}`} className="btn-outline btn-sm" onClick={e => e.stopPropagation()}>View ECP →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {filtered.length === 0 && (
+        <div style={{textAlign:'center',padding:'64px 0',color:'var(--text-faint)'}}>
+          <p style={{fontSize:28,marginBottom:8}}>🔍</p>
+          <p style={{fontWeight:500}}>No clients match your search</p>
         </div>
-        <Card className="p-5"><Lbl>Calming Strategies</Lbl><div className="flex flex-wrap">{ecp.calm.map(s=><span key={s} className="chip bg-blue-50 text-blue-700 border border-blue-100">{s}</span>)}</div></Card>
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="p-5"><Lbl>Transition Support</Lbl><p className="text-sm text-slate-700">{ecp.transition}</p></Card>
-          <Card className="p-5"><Lbl>Motivators</Lbl><div className="flex flex-wrap">{ecp.motivators.map(m=><span key={m} className="chip bg-purple-50 text-purple-700 border border-purple-100">{m}</span>)}</div></Card>
-        </div>
-        <Card className="p-5"><Lbl>Triggers / Things to Avoid</Lbl><div className="flex flex-wrap">{ecp.triggers.map(t=><span key={t} className="chip bg-red-50 text-red-700 border border-red-100">⚠ {t}</span>)}</div></Card>
-        <Card className="p-5"><Lbl>Staff Notes</Lbl><p className="text-sm text-slate-700 leading-relaxed">{ecp.staffNotes}</p></Card>
-      </div>
-      <div className="space-y-4">
-        <Card className="p-5"><Lbl>Parent / Guardian</Lbl><p className="font-semibold text-slate-800 text-sm">{cg.name}</p><p className="text-xs text-slate-500">{cg.rel} · {cg.phone}</p><p className="text-xs text-slate-600 mt-2 leading-relaxed border-t border-slate-100 pt-2">{cg.notes}</p></Card>
-        <Card className="p-5"><Lbl>Visit Goals</Lbl><p className="text-sm text-slate-700">{ecp.goals}</p></Card>
-        <Card className="p-5"><Lbl>Today's Appointments</Lbl>
-          {myAppts.length===0?<p className="text-xs text-slate-400">No appointments today</p>:myAppts.map(a=><div key={a.id} className="flex items-center justify-between py-1.5 border-b border-slate-50 last:border-0"><div><p className="text-xs font-medium text-slate-700">{a.time}</p><p className="text-xs text-slate-400">{a.service}</p></div><StBadge s={a.status}/></div>)}
-        </Card>
-        <Card className="p-5 bg-indigo-50 border-indigo-200">
-          <Lbl>RES Summary</Lbl>
-          <p className="text-xs text-slate-600 mb-1">💡 {res.lighting}</p>
-          <p className="text-xs text-slate-600 mb-1">🔊 {res.soundLevel}</p>
-          <p className="text-xs text-slate-600 mb-3">👤 {res.ssepRec}</p>
-          <a href={`#/clients/${cId}/res`} className="text-xs text-indigo-600 font-semibold hover:underline">View Full RES →</a>
-        </Card>
-      </div>
+      )}
     </div>
-  </div>;
+  );
 };
 
-/* ── RES PAGE ──────────────────────────────────────────── */
-const RESPage=({cId})=>{
-  const c=gc(cId);if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
-  const{res}=c;
-  return <div className="p-8">
-    <a href={`#/clients/${cId}`} className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to ECP</a>
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Recommended Experience Setup</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · RES</p></div>
-    <div className="grid grid-cols-3 gap-4 mb-4">
-      {[['💡 Lighting',res.lighting],['🔊 Sound Level',res.soundLevel],['🪑 Chair Type',res.chair],['⏱ Transition Time',res.time],['🖼 Visuals',res.visuals],['🏃 Service Pacing',res.pacing]].map(([l,v])=><Card key={l} className="p-5"><p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{l}</p><p className="text-sm text-slate-700 font-medium">{v}</p></Card>)}
-    </div>
-    <div className="grid grid-cols-2 gap-4 mb-4">
-      <Card className="p-5"><Lbl>🛠 Calming Tools to Prepare</Lbl><ul className="space-y-1 mt-2">{res.tools.map(t=><li key={t} className="flex items-center gap-2 text-sm text-slate-700"><span className="w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0"></span>{t}</li>)}</ul></Card>
-      <Card className="p-5"><Lbl>👤 SSEP Recommendation</Lbl><p className="text-sm text-slate-700 font-medium mt-2">{res.ssepRec}</p><a href="#/ssep" className="text-xs text-indigo-600 hover:underline mt-3 block">View SSEP team →</a></Card>
-    </div>
-    <Card className="p-5 bg-red-50 border-red-200"><Lbl>🚫 Do-Not-Use Triggers</Lbl><ul className="space-y-2 mt-2">{res.doNotUse.map(t=><li key={t} className="flex items-start gap-2 text-sm text-red-700"><span className="font-bold flex-shrink-0">✕</span>{t}</li>)}</ul></Card>
-  </div>;
-};
+/* ── ECP PAGE ── */
+const ECPPage = ({cId, appts}) => {
+  const c = gc(cId);
+  if (!c) return <div style={{padding:36,color:'var(--text-muted)'}}>Client not found.</div>;
+  const {ecp, res, cg} = c;
+  const myAppts = appts.filter(a => a.cId === cId);
 
-/* ── ACC PAGE ──────────────────────────────────────────── */
-const ACCPage=({cId})=>{
-  const c=gc(cId);
-  const[mood,setMood]=useState(3);const[sensory,setSensory]=useState('Good');const[ready,setReady]=useState('Yes');
-  const[cgN,setCgN]=useState('');const[notes,setNotes]=useState('');const[saved,setSaved]=useState(false);
-  if(!c)return <div className="p-8 text-slate-500">Client not found.</div>;
-  const emojis=['😰','😟','😐','🙂','😄'];const moodLabels=['Very Stressed','Uncomfortable','Neutral','Comfortable','Very Happy'];
-  return <div className="p-8">
-    <a href={`#/clients/${cId}`} className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to ECP</a>
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Arrival Comfort Check-In</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · ACC</p></div>
-    <div className="grid grid-cols-2 gap-6">
-      <div className="space-y-5">
-        <Card className="p-5"><Lbl>Current Mood / Comfort Level</Lbl>
-          <div className="flex gap-2 mt-3">{emojis.map((e,i)=><button key={i} className={`emoji-btn ${mood===i+1?'sel':''}`} onClick={()=>setMood(i+1)}>{e}</button>)}</div>
-          <p className="text-sm text-slate-500 mt-2">{moodLabels[mood-1]}</p>
-        </Card>
-        <Card className="p-5"><Lbl>Sensory Condition Today</Lbl>
-          <div className="flex gap-2 mt-2">{['Good','Fair','Cautious'].map(s=><button key={s} onClick={()=>setSensory(s)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${sensory===s?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{s}</button>)}</div>
-        </Card>
-        <Card className="p-5"><Lbl>Ready for Chair?</Lbl>
-          <div className="flex gap-2 mt-2 flex-wrap">{['Yes','Not Yet','Need Decompression'].map(r=><button key={r} onClick={()=>setReady(r)} className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${ready===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}</div>
-        </Card>
-        <Card className="p-5 bg-indigo-50 border-indigo-200"><Lbl>Quick Reference — ECP</Lbl>
-          <p className="text-xs text-slate-600 mb-1">Calming: <strong>{c.ecp.calm.join(', ')}</strong></p>
-          <p className="text-xs text-slate-600">Transition: <strong>{c.ecp.transition}</strong></p>
-        </Card>
-      </div>
-      <div className="space-y-5">
-        <Card className="p-5"><Lbl>Caregiver Notes Today</Lbl><textarea value={cgN} onChange={e=>setCgN(e.target.value)} placeholder="Any changes, updates, or notes from the caregiver..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
-        <Card className="p-5"><Lbl>ACC Notes</Lbl><textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Arrival observations, environmental adjustments needed..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
-        <div className="flex gap-3">
-          <button onClick={()=>{setSaved(true);setTimeout(()=>setSaved(false),3000);}} className="flex-1 bg-indigo-600 text-white rounded-lg px-4 py-3 text-sm font-semibold hover:bg-indigo-700 transition-colors">Save ACC Check-In</button>
-          <a href={`#/clients/${cId}/res`} className="flex-shrink-0 bg-white text-indigo-600 border border-indigo-200 rounded-lg px-4 py-3 text-sm font-semibold hover:bg-indigo-50">Update RES</a>
-        </div>
-        {saved&&<div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm text-emerald-700 font-medium text-center">✓ Check-in saved successfully</div>}
-      </div>
-    </div>
-  </div>;
-};
+  const chipStyle = (type) => {
+    const styles = {
+      avoid:  {bg:'var(--risk-h-bg)',    color:'var(--risk-h)',     border:'var(--risk-h-border)'},
+      pref:   {bg:'var(--risk-l-bg)',    color:'var(--risk-l)',     border:'var(--risk-l-border)'},
+      calm:   {bg:'var(--st-arrived-bg)',color:'var(--st-arrived)', border:'var(--st-arrived-border)'},
+      motivator:{bg:'var(--st-prog-bg)', color:'var(--st-prog)',    border:'var(--st-prog-border)'},
+      trigger:{bg:'var(--risk-h-bg)',    color:'var(--risk-h)',     border:'var(--risk-h-border)'},
+      tag:    {bg:'var(--bg)',           color:'var(--text-muted)', border:'var(--border)'},
+    };
+    const s = styles[type] || styles.tag;
+    return {background:s.bg,color:s.color,borderColor:s.border};
+  };
 
-/* ── ICPS INTAKE ───────────────────────────────────────── */
-const ICPSIntake=({onNew})=>{
-  const[step,setStep]=useState(1);const[done,setDone]=useState(false);
-  const[f,setF]=useState({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});
-  const set=(k,v)=>setF(p=>({...p,[k]:v}));
-  const steps=['Basic Info','Caregiver','Communication','Sensory Profile','Visit Goals','Consent'];
-  const addTag=(field,inp)=>{const v=f[inp].trim();if(v&&!f[field].includes(v))set(field,[...f[field],v]);set(inp,'');};
-  const rmTag=(field,v)=>set(field,f[field].filter(x=>x!==v));
-  const save=()=>{onNew({id:'client-'+Date.now(),firstName:f.fn,lastName:f.ln,age:parseInt(f.age)||0,pronouns:f.pronouns,risk:'Moderate',lastVisit:null,isNew:true,tags:['new client'],cg:{name:f.cgName,rel:f.cgRel,phone:f.cgPhone,notes:f.cgNotes},ecp:{comm:f.comm,avoid:f.avoid,pref:f.pref,calm:f.calm,transition:'',motivators:[],triggers:f.avoid,goals:f.goals,staffNotes:f.staffNotes},res:{lighting:'Soft warm light',soundLevel:'Low',chair:'Standard',tools:f.calm,visuals:'Visual schedule recommended',pacing:'Slow and narrated',time:'5 minutes',doNotUse:f.avoid,ssepRec:'Assign based on availability'}});setDone(true);};
-  if(done)return <div className="p-8"><div className="max-w-lg mx-auto text-center py-16"><div className="text-5xl mb-4">✅</div><h2 className="text-xl font-bold text-slate-800 mb-2">ECP Created Successfully</h2><p className="text-slate-500 text-sm mb-6">{f.fn} {f.ln}'s Experience & Comfort Profile has been saved.</p><div className="flex gap-3 justify-center"><a href="#/clients" className="bg-indigo-600 text-white rounded-lg px-5 py-2.5 text-sm font-semibold hover:bg-indigo-700">View All Clients</a><button onClick={()=>{setDone(false);setStep(1);setF({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});}} className="bg-white text-slate-600 border border-slate-200 rounded-lg px-5 py-2.5 text-sm font-semibold">New Intake</button></div></div></div>;
-  return <div className="p-8">
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">New Client Intake</h1><p className="text-slate-500 text-sm mt-1">Intake & Comfort Profiling System (ICPS)</p></div>
-    <div className="flex items-center gap-2 mb-8">
-      {steps.map((s,i)=><React.Fragment key={s}>
-        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${i+1===step?'bg-indigo-600 text-white':i+1<step?'bg-emerald-500 text-white':'bg-slate-100 text-slate-400'}`}>{i+1<step?'✓':i+1}</div>
-        <span className={`text-xs font-medium hidden md:block ${i+1===step?'text-indigo-600':'text-slate-400'}`}>{s}</span>
-        {i<steps.length-1&&<div className={`flex-1 h-0.5 ${i+1<step?'bg-emerald-400':'bg-slate-200'}`}></div>}
-      </React.Fragment>)}
-    </div>
-    <Card className="p-6 max-w-2xl">
-      {step===1&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Basic Information</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">First Name *</label><input value={f.fn} onChange={e=>set('fn',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">Last Name *</label><input value={f.ln} onChange={e=>set('ln',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">Age</label><input type="number" value={f.age} onChange={e=>set('age',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">Pronouns</label><select value={f.pronouns} onChange={e=>set('pronouns',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white">{['He/Him','She/Her','They/Them','He/They','She/They','Ask each time'].map(p=><option key={p}>{p}</option>)}</select></div>
-        </div>
-      </div>}
-      {step===2&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Caregiver / Guardian Information</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">Caregiver Name</label><input value={f.cgName} onChange={e=>set('cgName',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-          <div><label className="text-xs font-medium text-slate-500 block mb-1">Relationship</label><input value={f.cgRel} onChange={e=>set('cgRel',e.target.value)} placeholder="Mother, Father, Guardian..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-        </div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Phone Number</label><input value={f.cgPhone} onChange={e=>set('cgPhone',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Caregiver Notes</label><textarea value={f.cgNotes} onChange={e=>set('cgNotes',e.target.value)} placeholder="Anything important about the caregiver's role or communication style..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></div>
-      </div>}
-      {step===3&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Communication & Language</h2>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Communication Style</label><textarea value={f.comm} onChange={e=>set('comm',e.target.value)} placeholder="How does this person communicate best? Verbal, gestures, AAC device, picture cards..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Primary Language</label><input value={f.lang} onChange={e=>set('lang',e.target.value)} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/></div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Verbal Ability</label><textarea value={f.verbal} onChange={e=>set('verbal',e.target.value)} placeholder="Describe verbal communication range and any changes under stress..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
-      </div>}
-      {step===4&&<div className="space-y-5"><h2 className="font-semibold text-slate-800 mb-4">Sensory Profile</h2>
-        {[{label:'Things to Avoid (Sensory Avoidances)',field:'avoid',inp:'aI',color:'bg-red-50 text-red-700 border-red-100',ph:'e.g. loud clippers — press Enter'},
-          {label:'Sensory Preferences',field:'pref',inp:'pI',color:'bg-emerald-50 text-emerald-700 border-emerald-100',ph:'e.g. warm water — press Enter'},
-          {label:'Calming Strategies',field:'calm',inp:'cI',color:'bg-blue-50 text-blue-700 border-blue-100',ph:'e.g. train videos — press Enter'}
-        ].map(({label,field,inp,color,ph})=><div key={field}>
-          <label className="text-xs font-medium text-slate-500 block mb-1">{label}</label>
-          <div className="flex flex-wrap gap-1 mb-2">{f[field].map(t=><span key={t} className={`chip border ${color}`}>{t} <button onClick={()=>rmTag(field,t)} className="ml-1 font-bold">×</button></span>)}</div>
-          <input value={f[inp]} onChange={e=>set(inp,e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag(field,inp);}}} placeholder={ph} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
-        </div>)}
-      </div>}
-      {step===5&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Grooming History & Visit Goals</h2>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Grooming History</label><textarea value={f.history} onChange={e=>set('history',e.target.value)} placeholder="Past grooming experiences — what has happened before? What worked or didn't?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Visit Goals</label><textarea value={f.goals} onChange={e=>set('goals',e.target.value)} placeholder="What does a successful visit look like for this client?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Staff Notes</label><textarea value={f.staffNotes} onChange={e=>set('staffNotes',e.target.value)} placeholder="Key information for the Experience Professional..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></div>
-      </div>}
-      {step===6&&<div className="space-y-4"><h2 className="font-semibold text-slate-800 mb-4">Emergency Notes & Consent</h2>
-        <div><label className="text-xs font-medium text-slate-500 block mb-1">Emergency Comfort Notes</label><textarea value={f.emergency} onChange={e=>set('emergency',e.target.value)} placeholder="What to do if the client reaches a distress point? Who to contact?" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></div>
-        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-          <p className="text-xs text-slate-500 mb-3 leading-relaxed">The information collected in this form will be used to create a personalized Experience & Comfort Profile (ECP). This is an experience-supportive tool, not a clinical document.</p>
-          <label className="flex items-start gap-3 cursor-pointer"><input type="checkbox" checked={f.consent} onChange={e=>set('consent',e.target.checked)} className="mt-0.5 w-4 h-4"/><span className="text-sm text-slate-700 font-medium">I acknowledge and consent to this information being used to support this client's experience at Gifted Hands.</span></label>
-        </div>
-      </div>}
-      <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-100">
-        <button onClick={()=>setStep(s=>Math.max(1,s-1))} disabled={step===1} className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-30">← Back</button>
-        <span className="text-xs text-slate-400">Step {step} of {steps.length}</span>
-        {step<6?<button onClick={()=>setStep(s=>Math.min(6,s+1))} className="px-5 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Continue →</button>
-          :<button onClick={save} disabled={!f.consent} className="px-5 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-40">Create ECP ✓</button>}
-      </div>
-    </Card>
-  </div>;
-};
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <a href="#/clients" style={{fontSize:12,color:'var(--text-link)',textDecoration:'none',fontWeight:600,display:'inline-block',marginBottom:16}}>← Back to Clients</a>
 
-/* ── APPOINTMENTS ──────────────────────────────────────── */
-const ApptsPage=({appts})=>{
-  const[filter,setFilter]=useState('All');
-  const list=filter==='All'?appts:appts.filter(a=>a.status===filter);
-  return <div className="p-8">
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Appointments</h1><p className="text-slate-500 text-sm mt-1">June 7, 2026 · {appts.length} total</p></div>
-    <div className="flex gap-2 mb-6">{['All','Pending','Arrived','In Progress','Completed'].map(s=><button key={s} onClick={()=>setFilter(s)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${filter===s?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{s}</button>)}</div>
-    <div className="space-y-2">{list.map(a=>{
-      const c=gc(a.cId),s=gs(a.sId);if(!c)return null;const[bg,fg]=avColors(c.id);
-      return <Card key={a.id} className="p-4 hover:border-indigo-200 transition-colors">
-        <div className="flex items-center gap-4">
-          <div className="text-sm font-semibold text-slate-600 w-20 flex-shrink-0">{a.time}</div>
-          <div className={`w-8 h-8 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-xs font-bold ${fg}`}>{initials(c.firstName+' '+c.lastName)}</span></div>
-          <div className="flex-1 min-w-0"><p className="font-semibold text-slate-800 text-sm">{c.firstName} {c.lastName}</p><p className="text-xs text-slate-500">{a.service} · {s?.name} · {a.dur} min</p></div>
-          <RiskBadge r={c.risk}/><StBadge s={a.status}/>
-          <div className="flex gap-2">
-            <a href={`#/clients/${c.id}`} className="text-xs bg-white text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 hover:bg-slate-50 font-medium">ECP</a>
-            {a.status==='Pending'&&<a href={`#/clients/${c.id}/acc`} className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg px-2.5 py-1 hover:bg-indigo-100 font-medium">Check In</a>}
-            {a.status==='Completed'&&<a href={`#/appointments/${a.id}/notes`} className="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg px-2.5 py-1 hover:bg-emerald-100 font-medium">Notes</a>}
+      <div className="card" style={{padding:'20px 24px',marginBottom:16}}>
+        <div style={{display:'flex',alignItems:'flex-start',gap:16}}>
+          <Avatar name={`${c.firstName} ${c.lastName}`} id={c.id} size={56} />
+          <div style={{flex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:4}}>
+              <h1 className="page-title" style={{fontSize:22,margin:0}}>{c.firstName} {c.lastName}</h1>
+              <RiskBadge r={c.risk} />
+              {c.isNew && <span className="chip" style={{background:'var(--st-prog-bg)',color:'var(--st-prog)',borderColor:'var(--st-prog-border)'}}>New Client</span>}
+            </div>
+            <p style={{fontSize:12,color:'var(--text-muted)',margin:'0 0 8px'}}>Age {c.age} · {c.pronouns} · {c.lastVisit ? `Last visit: ${c.lastVisit}` : 'No previous visits'}</p>
+            <div>{c.tags.map(t => <span key={t} className="chip" style={chipStyle('tag')}>{t}</span>)}</div>
+          </div>
+          <div style={{display:'flex',gap:8,flexShrink:0}}>
+            <a href={`#/clients/${cId}/acc`} className="btn-accent btn-sm">ACC Check-In</a>
+            <a href={`#/clients/${cId}/res`} className="btn-outline btn-sm">View RES</a>
           </div>
         </div>
-      </Card>;
-    })}</div>
-  </div>;
-};
-
-/* ── POST-VISIT NOTES ──────────────────────────────────── */
-const NotesPage=({aId,appts,allNotes,onSave})=>{
-  const a=appts.find(x=>x.id===aId),ex=allNotes.find(n=>n.aId===aId),c=a?gc(a.cId):null;
-  const[f,setF]=useState({worked:ex?.worked||'',didnt:ex?.didnt||'',tI:'',triggers:ex?.triggers||[],toI:'',tools:ex?.tools||[],transR:ex?.transRating||0,comfR:ex?.comfortRating||0,changes:ex?.changes||'',cgFb:ex?.cgFeedback||'',returning:ex?.returning||'Yes'});
-  const[saved,setSaved]=useState(false);
-  const set=(k,v)=>setF(p=>({...p,[k]:v}));
-  const addTag=(field,inp)=>{const v=f[inp].trim();if(v&&!f[field].includes(v))set(field,[...f[field],v]);set(inp,'');};
-  const rmTag=(field,v)=>set(field,f[field].filter(x=>x!==v));
-  const save=()=>{onSave({aId,cId:a?.cId,...f});setSaved(true);setTimeout(()=>setSaved(false),3000);};
-  if(!a||!c)return <div className="p-8 text-slate-500">Appointment not found.</div>;
-  return <div className="p-8">
-    <a href="#/appointments" className="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Back to Appointments</a>
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">Post-Visit Notes</h1><p className="text-slate-500 text-sm mt-1">{c.firstName} {c.lastName} · {a.time} · {a.service}</p></div>
-    <div className="grid grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <Card className="p-5"><Lbl>What Worked Well</Lbl><textarea value={f.worked} onChange={e=>set('worked',e.target.value)} placeholder="Strategies, tools, and approaches that helped..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-28"/></Card>
-        <Card className="p-5"><Lbl>What Didn't Work</Lbl><textarea value={f.didnt} onChange={e=>set('didnt',e.target.value)} placeholder="Challenges encountered..." className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></Card>
-        <Card className="p-5"><Lbl>Triggers Observed</Lbl>
-          <div className="flex flex-wrap gap-1 mb-2">{f.triggers.map(t=><span key={t} className="chip bg-red-50 text-red-700 border border-red-100">{t} <button onClick={()=>rmTag('triggers',t)} className="ml-1">×</button></span>)}</div>
-          <input value={f.tI} onChange={e=>set('tI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('triggers','tI');}}} placeholder="Add trigger and press Enter..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
-        </Card>
-        <Card className="p-5"><Lbl>Calming Tools Used</Lbl>
-          <div className="flex flex-wrap gap-1 mb-2">{f.tools.map(t=><span key={t} className="chip bg-blue-50 text-blue-700 border border-blue-100">{t} <button onClick={()=>rmTag('tools',t)} className="ml-1">×</button></span>)}</div>
-          <input value={f.toI} onChange={e=>set('toI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('tools','toI');}}} placeholder="Add tool and press Enter..." className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"/>
-        </Card>
       </div>
-      <div className="space-y-4">
-        <Card className="p-5"><Lbl>Transition Success</Lbl><div className="mt-2"><Stars v={f.transR} onChange={v=>set('transR',v)}/></div></Card>
-        <Card className="p-5"><Lbl>Client Comfort Rating</Lbl><div className="mt-2"><Stars v={f.comfR} onChange={v=>set('comfR',v)}/></div></Card>
-        <Card className="p-5"><Lbl>Recommended Changes for Next Visit</Lbl><textarea value={f.changes} onChange={e=>set('changes',e.target.value)} placeholder="What should be different next time?" className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-24"/></Card>
-        <Card className="p-5"><Lbl>Caregiver Feedback</Lbl><textarea value={f.cgFb} onChange={e=>set('cgFb',e.target.value)} placeholder="What did the caregiver share after the visit?" className="w-full mt-2 border border-slate-200 rounded-lg px-3 py-2 text-sm h-20"/></Card>
-        <Card className="p-5"><Lbl>Likely to Return?</Lbl>
-          <div className="flex gap-2 mt-2">{['Yes','Maybe','Needs Follow-up'].map(r=><button key={r} onClick={()=>set('returning',r)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${f.returning===r?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>{r}</button>)}</div>
-        </Card>
-        <button onClick={save} className="w-full bg-indigo-600 text-white rounded-lg py-3 text-sm font-semibold hover:bg-indigo-700">Save Post-Visit Notes</button>
-        {saved&&<div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm text-emerald-700 font-medium text-center">✓ Notes saved</div>}
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 300px',gap:12}}>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Communication Style</Lbl>
+            <p style={{fontSize:13,color:'var(--text)',margin:0,lineHeight:1.6}}>{ecp.comm}</p>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Sensory Avoidances</Lbl>
+            <div>{ecp.avoid.map(s => <span key={s} className="chip" style={chipStyle('avoid')}>{s}</span>)}</div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Sensory Preferences</Lbl>
+            <div>{ecp.pref.map(s => <span key={s} className="chip" style={chipStyle('pref')}>{s}</span>)}</div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Calming Strategies</Lbl>
+            <div>{ecp.calm.map(s => <span key={s} className="chip" style={chipStyle('calm')}>{s}</span>)}</div>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Transition Support</Lbl>
+            <p style={{fontSize:13,color:'var(--text)',margin:0,lineHeight:1.6}}>{ecp.transition}</p>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Motivators</Lbl>
+            <div>{ecp.motivators.map(m => <span key={m} className="chip" style={chipStyle('motivator')}>{m}</span>)}</div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Triggers / Things to Avoid</Lbl>
+            <div>{ecp.triggers.map(t => <span key={t} className="chip" style={chipStyle('trigger')}>⚠ {t}</span>)}</div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Staff Notes</Lbl>
+            <p style={{fontSize:13,color:'var(--text)',margin:0,lineHeight:1.6}}>{ecp.staffNotes}</p>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Parent / Guardian</Lbl>
+            <p style={{fontWeight:600,color:'var(--text)',fontSize:13,margin:'0 0 2px'}}>{cg.name}</p>
+            <p style={{fontSize:11,color:'var(--text-muted)',margin:'0 0 8px'}}>{cg.rel} · {cg.phone}</p>
+            <div className="divider" style={{margin:'8px 0'}} />
+            <p style={{fontSize:12,color:'var(--text-muted)',margin:0,lineHeight:1.5}}>{cg.notes}</p>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Visit Goals</Lbl>
+            <p style={{fontSize:13,color:'var(--text)',margin:0,lineHeight:1.6}}>{ecp.goals}</p>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Today's Appointments</Lbl>
+            {myAppts.length === 0 ? <p style={{fontSize:11,color:'var(--text-faint)',margin:0}}>No appointments today</p> : myAppts.map(a => (
+              <div key={a.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid var(--border-light)'}}>
+                <div>
+                  <p style={{fontSize:11,fontWeight:600,color:'var(--text)',margin:0}}>{a.time}</p>
+                  <p style={{fontSize:10,color:'var(--text-faint)',margin:0}}>{a.service}</p>
+                </div>
+                <StBadge s={a.status} />
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{padding:'16px 18px',background:'var(--accent-light)',borderColor:'var(--accent-border)'}}>
+            <Lbl>RES Summary</Lbl>
+            <p style={{fontSize:11,color:'var(--text-muted)',margin:'0 0 3px'}}>💡 {res.lighting}</p>
+            <p style={{fontSize:11,color:'var(--text-muted)',margin:'0 0 3px'}}>🔊 {res.soundLevel}</p>
+            <p style={{fontSize:11,color:'var(--text-muted)',margin:'0 0 10px'}}>👤 {res.ssepRec}</p>
+            <a href={`#/clients/${cId}/res`} style={{fontSize:11,color:'var(--accent)',fontWeight:700,textDecoration:'none'}}>View Full RES →</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>;
+  );
 };
 
-/* ── SSEP TEAM ─────────────────────────────────────────── */
-const SSEPPage=({appts})=>{
-  const[exp,setExp]=useState(null);
-  return <div className="p-8">
-    <div className="mb-6"><h1 className="text-2xl font-bold text-slate-800">SSEP Team</h1><p className="text-slate-500 text-sm mt-1">Sensory-Supportive Experience Professionals</p></div>
-    <div className="grid grid-cols-2 gap-4">{SSEPS.map(ssep=>{
-      const[bg,fg]=avColors(ssep.id);const myA=appts.filter(a=>a.sId===ssep.id);
-      return <Card key={ssep.id} className="p-6">
-        <div className="flex items-start gap-4 mb-4">
-          <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}><span className={`text-sm font-bold ${fg}`}>{initials(ssep.name)}</span></div>
-          <div className="flex-1"><div className="flex items-center justify-between"><h3 className="font-semibold text-slate-800">{ssep.name}</h3><AvBadge a={ssep.availability}/></div><p className="text-xs text-slate-500 mt-0.5">{ssep.role}</p></div>
+/* ── RES PAGE ── */
+const RESPage = ({cId}) => {
+  const c = gc(cId);
+  if (!c) return <div style={{padding:36,color:'var(--text-muted)'}}>Client not found.</div>;
+  const {res} = c;
+  const details = [
+    ['💡 Lighting', res.lighting], ['🔊 Sound Level', res.soundLevel],
+    ['🪑 Chair Setup', res.chair], ['⏱ Timing', res.time],
+    ['🖼 Visuals', res.visuals],   ['🏃 Service Pacing', res.pacing],
+  ];
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <a href={`#/clients/${cId}`} style={{fontSize:12,color:'var(--text-link)',textDecoration:'none',fontWeight:600,display:'inline-block',marginBottom:16}}>← Back to ECP</a>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">Recommended Experience Setup</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>{c.firstName} {c.lastName} · RES</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:10,marginBottom:12}}>
+        {details.map(([l,v]) => (
+          <div key={l} className="card" style={{padding:'14px 16px'}}>
+            <p style={{fontSize:10,fontWeight:700,letterSpacing:'0.07em',textTransform:'uppercase',color:'var(--text-faint)',margin:'0 0 5px'}}>{l}</p>
+            <p style={{fontSize:13,color:'var(--text)',margin:0,fontWeight:500,lineHeight:1.5}}>{v}</p>
+          </div>
+        ))}
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:12}}>
+        <div className="card" style={{padding:'16px 18px'}}>
+          <Lbl>🛠 Calming Tools to Prepare</Lbl>
+          <ul style={{margin:0,padding:0,listStyle:'none',display:'flex',flexDirection:'column',gap:6,marginTop:6}}>
+            {res.tools.map(t => (
+              <li key={t} style={{display:'flex',alignItems:'center',gap:8,fontSize:13,color:'var(--text)'}}>
+                <span style={{width:5,height:5,borderRadius:'50%',background:'var(--accent)',flexShrink:0,display:'inline-block'}}></span>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
-        <p className="text-sm text-slate-600 mb-4 leading-relaxed">{ssep.bio}</p>
-        <div className="flex flex-wrap gap-1 mb-4">{ssep.skills.map(s=><span key={s} className="chip bg-indigo-50 text-indigo-600 border border-indigo-100">{s}</span>)}</div>
-        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-          <p className="text-xs text-slate-500">{myA.length} appointment{myA.length!==1?'s':''} today</p>
-          <button onClick={()=>setExp(exp===ssep.id?null:ssep.id)} className="text-xs text-indigo-600 font-medium hover:underline">{exp===ssep.id?'Hide schedule ↑':'View schedule ↓'}</button>
+        <div className="card" style={{padding:'16px 18px'}}>
+          <Lbl>👤 SSEP Recommendation</Lbl>
+          <p style={{fontSize:13,color:'var(--text)',fontWeight:600,margin:'8px 0 10px'}}>{res.ssepRec}</p>
+          <a href="#/ssep" style={{fontSize:11,color:'var(--text-link)',fontWeight:600,textDecoration:'none'}}>View SSEP team →</a>
         </div>
-        {exp===ssep.id&&<div className="mt-3 space-y-2">{myA.length===0?<p className="text-xs text-slate-400">No appointments today</p>:myA.map(a=>{const c=gc(a.cId);return c?<div key={a.id} className="flex items-center justify-between py-1.5 px-3 bg-slate-50 rounded-lg"><div><p className="text-xs font-medium text-slate-700">{a.time} · {c.firstName} {c.lastName}</p><p className="text-xs text-slate-400">{a.service}</p></div><StBadge s={a.status}/></div>:null;})}</div>}
-      </Card>;
-    })}</div>
-  </div>;
+      </div>
+      <div className="card" style={{padding:'16px 18px',background:'var(--risk-h-bg)',borderColor:'var(--risk-h-border)'}}>
+        <Lbl>🚫 Do-Not-Use / Triggers</Lbl>
+        <ul style={{margin:'6px 0 0',padding:0,listStyle:'none',display:'flex',flexDirection:'column',gap:6}}>
+          {res.doNotUse.map(t => (
+            <li key={t} style={{display:'flex',alignItems:'flex-start',gap:8,fontSize:13,color:'var(--risk-h)'}}>
+              <span style={{fontWeight:700,flexShrink:0,marginTop:1}}>✕</span>{t}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 };
 
-/* ── APP / ROUTER ──────────────────────────────────────── */
-function App(){
-  const[hash,setHash]=useState(window.location.hash||'#/');
-  const[appts,setAppts]=useState(APPTS_INIT);
-  const[notes,setNotes]=useState(NOTES_INIT);
-  const[extra,setExtra]=useState([]);
-  useEffect(()=>{const h=()=>setHash(window.location.hash||'#/');window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h);},[]);
-  const saveNote=n=>setNotes(ns=>{const i=ns.findIndex(x=>x.aId===n.aId);if(i>=0){const c=[...ns];c[i]=n;return c;}return[...ns,{id:'n'+Date.now(),...n}];});
-  const path=(hash.replace('#','')||'/');const parts=path.split('/').filter(Boolean);
+/* ── ACC PAGE ── */
+const ACCPage = ({cId}) => {
+  const c = gc(cId);
+  const [mood, setMood] = useState(3);
+  const [sensory, setSensory] = useState('Good');
+  const [ready, setReady] = useState('Yes');
+  const [cgN, setCgN] = useState('');
+  const [notes, setNotes] = useState('');
+  const [saved, setSaved] = useState(false);
+  if (!c) return <div style={{padding:36,color:'var(--text-muted)'}}>Client not found.</div>;
+  const emojis = ['😰','😟','😐','🙂','😄'];
+  const moodLabels = ['Very Stressed','Uncomfortable','Neutral','Comfortable','Very Happy'];
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <a href={`#/clients/${cId}`} style={{fontSize:12,color:'var(--text-link)',textDecoration:'none',fontWeight:600,display:'inline-block',marginBottom:16}}>← Back to ECP</a>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">Arrival Comfort Check-In</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>{c.firstName} {c.lastName} · ACC</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Current Mood / Comfort Level</Lbl>
+            <div style={{display:'flex',gap:6,marginTop:10}}>
+              {emojis.map((e,i) => <button key={i} className={`emoji-btn ${mood === i+1 ? 'sel' : ''}`} onClick={() => setMood(i+1)}>{e}</button>)}
+            </div>
+            <p style={{fontSize:12,color:'var(--text-muted)',marginTop:8,marginBottom:0}}>{moodLabels[mood-1]}</p>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Sensory Condition Today</Lbl>
+            <div style={{display:'flex',gap:6,marginTop:8}}>
+              {['Good','Fair','Cautious'].map(s => (
+                <button key={s} className={`filter-btn ${sensory === s ? 'active' : ''}`} onClick={() => setSensory(s)}>{s}</button>
+              ))}
+            </div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Ready for Chair?</Lbl>
+            <div style={{display:'flex',gap:6,marginTop:8,flexWrap:'wrap'}}>
+              {['Yes','Not Yet','Need Decompression'].map(r => (
+                <button key={r} className={`filter-btn ${ready === r ? 'active' : ''}`} onClick={() => setReady(r)}>{r}</button>
+              ))}
+            </div>
+          </div>
+          <div className="card" style={{padding:'16px 18px',background:'var(--accent-light)',borderColor:'var(--accent-border)'}}>
+            <Lbl>Quick Reference — ECP</Lbl>
+            <p style={{fontSize:12,color:'var(--text-muted)',margin:'0 0 4px'}}>Calming: <strong style={{color:'var(--text)'}}>{c.ecp.calm.join(', ')}</strong></p>
+            <p style={{fontSize:12,color:'var(--text-muted)',margin:0}}>Transition: <strong style={{color:'var(--text)'}}>{c.ecp.transition}</strong></p>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Caregiver Notes Today</Lbl>
+            <textarea value={cgN} onChange={e => setCgN(e.target.value)}
+              placeholder="Any changes, updates, or notes from the caregiver…"
+              className="field" style={{height:108,marginTop:8}} />
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>ACC Notes</Lbl>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)}
+              placeholder="Arrival observations, environmental adjustments needed…"
+              className="field" style={{height:108,marginTop:8}} />
+          </div>
+          <div style={{display:'flex',gap:10}}>
+            <button onClick={() => {setSaved(true); setTimeout(() => setSaved(false), 3000);}}
+              className="btn-accent" style={{flex:1,justifyContent:'center',padding:'10px'}}>
+              Save ACC Check-In
+            </button>
+            <a href={`#/clients/${cId}/res`} className="btn-outline" style={{flexShrink:0}}>Update RES</a>
+          </div>
+          {saved && <div className="banner-success">✓ Check-in saved successfully</div>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── ICPS INTAKE ── */
+const ICPSIntake = ({onNew}) => {
+  const [step, setStep] = useState(1);
+  const [done, setDone] = useState(false);
+  const [f, setF] = useState({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});
+  const set = (k,v) => setF(p => ({...p, [k]:v}));
+  const steps = ['Basic Info','Caregiver','Communication','Sensory Profile','Visit Goals','Consent'];
+  const addTag = (field,inp) => { const v = f[inp].trim(); if (v && !f[field].includes(v)) set(field,[...f[field],v]); set(inp,''); };
+  const rmTag = (field,v) => set(field, f[field].filter(x => x !== v));
+  const save = () => {
+    onNew({id:'client-'+Date.now(),firstName:f.fn,lastName:f.ln,age:parseInt(f.age)||0,pronouns:f.pronouns,risk:'Moderate',lastVisit:null,isNew:true,tags:['new client'],
+      cg:{name:f.cgName,rel:f.cgRel,phone:f.cgPhone,notes:f.cgNotes},
+      ecp:{comm:f.comm,avoid:f.avoid,pref:f.pref,calm:f.calm,transition:'',motivators:[],triggers:f.avoid,goals:f.goals,staffNotes:f.staffNotes},
+      res:{lighting:'Soft warm light',soundLevel:'Low',chair:'Standard',tools:f.calm,visuals:'Visual schedule recommended',pacing:'Slow and narrated',time:'5 minutes',doNotUse:f.avoid,ssepRec:'Assign based on availability'}});
+    setDone(true);
+  };
+
+  if (done) return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{maxWidth:440,margin:'60px auto',textAlign:'center'}}>
+        <div style={{fontSize:48,marginBottom:16}}>✅</div>
+        <h2 className="page-title" style={{fontSize:20,marginBottom:8}}>ECP Created Successfully</h2>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginBottom:24}}>{f.fn} {f.ln}'s Experience &amp; Comfort Profile has been saved.</p>
+        <div style={{display:'flex',gap:10,justifyContent:'center'}}>
+          <a href="#/clients" className="btn-accent">View All Clients</a>
+          <button className="btn-ghost" onClick={() => {setDone(false);setStep(1);setF({fn:'',ln:'',age:'',pronouns:'He/Him',cgName:'',cgRel:'',cgPhone:'',cgNotes:'',comm:'',lang:'English',verbal:'',avoid:[],pref:[],calm:[],aI:'',pI:'',cI:'',history:'',goals:'',staffNotes:'',emergency:'',consent:false});}}>
+            New Intake
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">New Client Intake</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>Intake &amp; Comfort Profiling System (ICPS)</p>
+      </div>
+
+      <div style={{display:'flex',alignItems:'center',gap:0,marginBottom:28}}>
+        {steps.map((s,i) => (
+          <React.Fragment key={s}>
+            <div style={{display:'flex',alignItems:'center',flexDirection:'column',gap:4}}>
+              <div className={`step-dot ${i+1 < step ? 'done' : i+1 === step ? 'current' : 'todo'}`}>
+                {i+1 < step ? '✓' : i+1}
+              </div>
+            </div>
+            {i < steps.length-1 && <div className={`step-line ${i+1 < step ? 'done' : 'todo'}`} style={{margin:'0 6px',flexShrink:0,width:32}}></div>}
+          </React.Fragment>
+        ))}
+        <span style={{fontSize:12,color:'var(--text-muted)',marginLeft:'auto',fontWeight:500}}>{steps[step-1]}</span>
+      </div>
+
+      <div className="card" style={{padding:'24px',maxWidth:560}}>
+        {step === 1 && <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <p className="section-title" style={{marginBottom:4}}>Basic Information</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>First Name *</label><input value={f.fn} onChange={e=>set('fn',e.target.value)} className="field"/></div>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Last Name *</label><input value={f.ln} onChange={e=>set('ln',e.target.value)} className="field"/></div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Age</label><input type="number" value={f.age} onChange={e=>set('age',e.target.value)} className="field"/></div>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Pronouns</label>
+              <select value={f.pronouns} onChange={e=>set('pronouns',e.target.value)} className="field" style={{background:'var(--surface)'}}>
+                {['He/Him','She/Her','They/Them','He/They','She/They','Ask each time'].map(p=><option key={p}>{p}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>}
+
+        {step === 2 && <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <p className="section-title" style={{marginBottom:4}}>Caregiver / Guardian Information</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Caregiver Name</label><input value={f.cgName} onChange={e=>set('cgName',e.target.value)} className="field"/></div>
+            <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Relationship</label><input value={f.cgRel} onChange={e=>set('cgRel',e.target.value)} placeholder="Mother, Father, Guardian…" className="field"/></div>
+          </div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Phone Number</label><input value={f.cgPhone} onChange={e=>set('cgPhone',e.target.value)} className="field"/></div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Caregiver Notes</label><textarea value={f.cgNotes} onChange={e=>set('cgNotes',e.target.value)} placeholder="Anything important about the caregiver's role or communication style…" className="field" style={{height:96}}/></div>
+        </div>}
+
+        {step === 3 && <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <p className="section-title" style={{marginBottom:4}}>Communication &amp; Language</p>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Communication Style</label><textarea value={f.comm} onChange={e=>set('comm',e.target.value)} placeholder="How does this person communicate best? Verbal, gestures, AAC device, picture cards…" className="field" style={{height:96}}/></div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Primary Language</label><input value={f.lang} onChange={e=>set('lang',e.target.value)} className="field"/></div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Verbal Ability</label><textarea value={f.verbal} onChange={e=>set('verbal',e.target.value)} placeholder="Describe verbal communication range and any changes under stress…" className="field" style={{height:80}}/></div>
+        </div>}
+
+        {step === 4 && <div style={{display:'flex',flexDirection:'column',gap:16}}>
+          <p className="section-title" style={{marginBottom:4}}>Sensory Profile</p>
+          {[
+            {label:'Things to Avoid (Sensory Avoidances)',field:'avoid',inp:'aI',
+              chipSt:{background:'var(--risk-h-bg)',color:'var(--risk-h)',borderColor:'var(--risk-h-border)'},ph:'e.g. loud clippers — press Enter'},
+            {label:'Sensory Preferences',field:'pref',inp:'pI',
+              chipSt:{background:'var(--risk-l-bg)',color:'var(--risk-l)',borderColor:'var(--risk-l-border)'},ph:'e.g. warm water — press Enter'},
+            {label:'Calming Strategies',field:'calm',inp:'cI',
+              chipSt:{background:'var(--st-arrived-bg)',color:'var(--st-arrived)',borderColor:'var(--st-arrived-border)'},ph:'e.g. train videos — press Enter'},
+          ].map(({label,field,inp,chipSt,ph}) => (
+            <div key={field}>
+              <label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>{label}</label>
+              <div style={{marginBottom:6}}>
+                {f[field].map(t => (
+                  <span key={t} className="chip" style={chipSt}>{t} <button onClick={()=>rmTag(field,t)} style={{marginLeft:4,fontWeight:700,background:'none',border:'none',cursor:'pointer',color:'inherit',padding:0,fontSize:12}}>×</button></span>
+                ))}
+              </div>
+              <input value={f[inp]} onChange={e=>set(inp,e.target.value)}
+                onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag(field,inp);}}}
+                placeholder={ph} className="field"/>
+            </div>
+          ))}
+        </div>}
+
+        {step === 5 && <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <p className="section-title" style={{marginBottom:4}}>Grooming History &amp; Visit Goals</p>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Grooming History</label><textarea value={f.history} onChange={e=>set('history',e.target.value)} placeholder="Past grooming experiences — what has happened before? What worked or didn't?" className="field" style={{height:96}}/></div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Visit Goals</label><textarea value={f.goals} onChange={e=>set('goals',e.target.value)} placeholder="What does a successful visit look like for this client?" className="field" style={{height:80}}/></div>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Staff Notes</label><textarea value={f.staffNotes} onChange={e=>set('staffNotes',e.target.value)} placeholder="Key information for the Experience Professional…" className="field" style={{height:80}}/></div>
+        </div>}
+
+        {step === 6 && <div style={{display:'flex',flexDirection:'column',gap:14}}>
+          <p className="section-title" style={{marginBottom:4}}>Emergency Notes &amp; Consent</p>
+          <div><label style={{fontSize:11,fontWeight:600,color:'var(--text-muted)',display:'block',marginBottom:5}}>Emergency Comfort Notes</label><textarea value={f.emergency} onChange={e=>set('emergency',e.target.value)} placeholder="What to do if the client reaches a distress point? Who to contact?" className="field" style={{height:96}}/></div>
+          <div style={{background:'var(--bg)',borderRadius:8,padding:'14px 16px',border:'1px solid var(--border)'}}>
+            <p style={{fontSize:11,color:'var(--text-muted)',marginBottom:10,lineHeight:1.5}}>The information collected in this form will be used to create a personalized Experience &amp; Comfort Profile (ECP). This is an experience-supportive tool, not a clinical document.</p>
+            <label style={{display:'flex',alignItems:'flex-start',gap:10,cursor:'pointer'}}>
+              <input type="checkbox" checked={f.consent} onChange={e=>set('consent',e.target.checked)} style={{marginTop:2,width:16,height:16,accentColor:'var(--accent)'}}/>
+              <span style={{fontSize:13,color:'var(--text)',fontWeight:500,lineHeight:1.5}}>I acknowledge and consent to this information being used to support this client's experience at Gifted Hands.</span>
+            </label>
+          </div>
+        </div>}
+
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:20,paddingTop:16,borderTop:'1px solid var(--border-light)'}}>
+          <button onClick={() => setStep(s => Math.max(1,s-1))} disabled={step===1} className="btn-ghost" style={{opacity:step===1?0.35:1}}>← Back</button>
+          <span style={{fontSize:11,color:'var(--text-faint)'}}>Step {step} of {steps.length}</span>
+          {step < 6
+            ? <button onClick={() => setStep(s => Math.min(6,s+1))} className="btn-accent">Continue →</button>
+            : <button onClick={save} disabled={!f.consent} className="btn-accent" style={{background:'var(--risk-l)',opacity:f.consent?1:0.4}}>Create ECP ✓</button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── APPOINTMENTS ── */
+const ApptsPage = ({appts}) => {
+  const [filter, setFilter] = useState('All');
+  const list = filter === 'All' ? appts : appts.filter(a => a.status === filter);
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">Appointments</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>June 7, 2026 · {appts.length} total</p>
+      </div>
+      <div style={{display:'flex',gap:6,marginBottom:18}}>
+        {['All','Pending','Arrived','In Progress','Completed'].map(s => (
+          <button key={s} className={`filter-btn ${filter === s ? 'active' : ''}`} onClick={() => setFilter(s)}>{s}</button>
+        ))}
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:6}}>
+        {list.map(a => {
+          const c = gc(a.cId), s = gs(a.sId);
+          if (!c) return null;
+          return (
+            <div key={a.id} className="card" style={{padding:'13px 16px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <div style={{fontSize:12,fontWeight:600,color:'var(--text-muted)',width:68,flexShrink:0,fontVariantNumeric:'tabular-nums'}}>{a.time}</div>
+                <Avatar name={`${c.firstName} ${c.lastName}`} id={c.id} size={32} />
+                <div style={{flex:1,minWidth:0}}>
+                  <p style={{fontWeight:600,color:'var(--text)',fontSize:13,margin:0}}>{c.firstName} {c.lastName}</p>
+                  <p style={{fontSize:11,color:'var(--text-muted)',margin:'2px 0 0'}}>{a.service} · {s?.name} · {a.dur} min</p>
+                </div>
+                <RiskBadge r={c.risk}/>
+                <StBadge s={a.status}/>
+                <div style={{display:'flex',gap:6,flexShrink:0}}>
+                  <a href={`#/clients/${c.id}`} className="btn-ghost btn-sm">ECP</a>
+                  {a.status === 'Pending' && <a href={`#/clients/${c.id}/acc`} className="btn-outline btn-sm">Check In</a>}
+                  {a.status === 'Completed' && <a href={`#/appointments/${a.id}/notes`} className="btn-accent btn-sm">Notes</a>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ── POST-VISIT NOTES ── */
+const NotesPage = ({aId, appts, allNotes, onSave}) => {
+  const a = appts.find(x => x.id === aId);
+  const ex = allNotes.find(n => n.aId === aId);
+  const c = a ? gc(a.cId) : null;
+  const [f, setF] = useState({worked:ex?.worked||'',didnt:ex?.didnt||'',tI:'',triggers:ex?.triggers||[],toI:'',tools:ex?.tools||[],transR:ex?.transRating||0,comfR:ex?.comfortRating||0,changes:ex?.changes||'',cgFb:ex?.cgFeedback||'',returning:ex?.returning||'Yes'});
+  const [saved, setSaved] = useState(false);
+  const set = (k,v) => setF(p => ({...p, [k]:v}));
+  const addTag = (field,inp) => { const v = f[inp].trim(); if (v && !f[field].includes(v)) set(field,[...f[field],v]); set(inp,''); };
+  const rmTag = (field,v) => set(field, f[field].filter(x => x !== v));
+  const save = () => { onSave({aId, cId:a?.cId, ...f}); setSaved(true); setTimeout(() => setSaved(false),3000); };
+  if (!a || !c) return <div style={{padding:36,color:'var(--text-muted)'}}>Appointment not found.</div>;
+
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <a href="#/appointments" style={{fontSize:12,color:'var(--text-link)',textDecoration:'none',fontWeight:600,display:'inline-block',marginBottom:16}}>← Back to Appointments</a>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">Post-Visit Notes</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>{c.firstName} {c.lastName} · {a.time} · {a.service}</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>What Worked Well</Lbl>
+            <textarea value={f.worked} onChange={e=>set('worked',e.target.value)} placeholder="Strategies, tools, and approaches that helped…" className="field" style={{height:112,marginTop:6}}/>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>What Didn't Work</Lbl>
+            <textarea value={f.didnt} onChange={e=>set('didnt',e.target.value)} placeholder="Challenges encountered…" className="field" style={{height:88,marginTop:6}}/>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Triggers Observed</Lbl>
+            <div style={{marginBottom:6}}>
+              {f.triggers.map(t => <span key={t} className="chip" style={{background:'var(--risk-h-bg)',color:'var(--risk-h)',borderColor:'var(--risk-h-border)'}}>{t} <button onClick={()=>rmTag('triggers',t)} style={{marginLeft:4,fontWeight:700,background:'none',border:'none',cursor:'pointer',color:'inherit',padding:0}}>×</button></span>)}
+            </div>
+            <input value={f.tI} onChange={e=>set('tI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('triggers','tI');}}} placeholder="Add trigger and press Enter…" className="field"/>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Calming Tools Used</Lbl>
+            <div style={{marginBottom:6}}>
+              {f.tools.map(t => <span key={t} className="chip" style={{background:'var(--st-arrived-bg)',color:'var(--st-arrived)',borderColor:'var(--st-arrived-border)'}}>{t} <button onClick={()=>rmTag('tools',t)} style={{marginLeft:4,fontWeight:700,background:'none',border:'none',cursor:'pointer',color:'inherit',padding:0}}>×</button></span>)}
+            </div>
+            <input value={f.toI} onChange={e=>set('toI',e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('tools','toI');}}} placeholder="Add tool and press Enter…" className="field"/>
+          </div>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Transition Success</Lbl>
+            <div style={{marginTop:6}}><Stars v={f.transR} onChange={v=>set('transR',v)}/></div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Client Comfort Rating</Lbl>
+            <div style={{marginTop:6}}><Stars v={f.comfR} onChange={v=>set('comfR',v)}/></div>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Recommended Changes for Next Visit</Lbl>
+            <textarea value={f.changes} onChange={e=>set('changes',e.target.value)} placeholder="What should be different next time?" className="field" style={{height:88,marginTop:6}}/>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Caregiver Feedback</Lbl>
+            <textarea value={f.cgFb} onChange={e=>set('cgFb',e.target.value)} placeholder="What did the caregiver share after the visit?" className="field" style={{height:80,marginTop:6}}/>
+          </div>
+          <div className="card" style={{padding:'16px 18px'}}>
+            <Lbl>Likely to Return?</Lbl>
+            <div style={{display:'flex',gap:6,marginTop:8}}>
+              {['Yes','Maybe','Needs Follow-up'].map(r => (
+                <button key={r} className={`filter-btn ${f.returning === r ? 'active' : ''}`} onClick={() => set('returning',r)}>{r}</button>
+              ))}
+            </div>
+          </div>
+          <button onClick={save} className="btn-accent" style={{justifyContent:'center',padding:'12px'}}>Save Post-Visit Notes</button>
+          {saved && <div className="banner-success">✓ Notes saved successfully</div>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── SSEP TEAM ── */
+const SSEPPage = ({appts}) => {
+  const [exp, setExp] = useState(null);
+  return (
+    <div style={{padding:'32px 36px'}}>
+      <div style={{marginBottom:20}}>
+        <h1 className="page-title">SSEP Team</h1>
+        <p style={{color:'var(--text-muted)',fontSize:13,marginTop:4}}>Sensory-Supportive Experience Professionals</p>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        {SSEPS.map(ssep => {
+          const myA = appts.filter(a => a.sId === ssep.id);
+          return (
+            <div key={ssep.id} className="card" style={{padding:'20px 22px'}}>
+              <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:14}}>
+                <Avatar name={ssep.name} id={ssep.id} size={44} />
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:2}}>
+                    <h3 style={{fontWeight:600,fontSize:14,margin:0,color:'var(--text)'}}>{ssep.name}</h3>
+                    <AvBadge a={ssep.availability}/>
+                  </div>
+                  <p style={{fontSize:11,color:'var(--text-muted)',margin:0}}>{ssep.role}</p>
+                </div>
+              </div>
+              <p style={{fontSize:13,color:'var(--text-muted)',marginBottom:12,lineHeight:1.55}}>{ssep.bio}</p>
+              <div style={{display:'flex',flexWrap:'wrap',marginBottom:14}}>
+                {ssep.skills.map(s => (
+                  <span key={s} className="chip" style={{background:'var(--accent-light)',color:'var(--accent-muted)',borderColor:'var(--accent-border)'}}>{s}</span>
+                ))}
+              </div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',borderTop:'1px solid var(--border-light)',paddingTop:12}}>
+                <p style={{fontSize:11,color:'var(--text-faint)',margin:0}}>{myA.length} appointment{myA.length !== 1 ? 's' : ''} today</p>
+                <button onClick={() => setExp(exp === ssep.id ? null : ssep.id)}
+                  style={{fontSize:11,color:'var(--text-link)',fontWeight:600,background:'none',border:'none',cursor:'pointer',padding:0}}>
+                  {exp === ssep.id ? 'Hide schedule ↑' : 'View schedule ↓'}
+                </button>
+              </div>
+              {exp === ssep.id && (
+                <div style={{marginTop:10,display:'flex',flexDirection:'column',gap:4}}>
+                  {myA.length === 0 ? <p style={{fontSize:11,color:'var(--text-faint)',margin:0}}>No appointments today</p> : myA.map(a => {
+                    const c = gc(a.cId);
+                    return c ? (
+                      <div key={a.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'7px 10px',background:'var(--bg)',borderRadius:6}}>
+                        <div>
+                          <p style={{fontSize:11,fontWeight:600,color:'var(--text)',margin:0}}>{a.time} · {c.firstName} {c.lastName}</p>
+                          <p style={{fontSize:10,color:'var(--text-faint)',margin:'1px 0 0'}}>{a.service}</p>
+                        </div>
+                        <StBadge s={a.status}/>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ── APP / ROUTER ── */
+function App() {
+  const [hash, setHash] = useState(window.location.hash || '#/');
+  const [appts, setAppts] = useState(APPTS_INIT);
+  const [notes, setNotes] = useState(NOTES_INIT);
+  const [extra, setExtra] = useState([]);
+
+  useEffect(() => {
+    const h = () => setHash(window.location.hash || '#/');
+    window.addEventListener('hashchange', h);
+    return () => window.removeEventListener('hashchange', h);
+  }, []);
+
+  const saveNote = n => setNotes(ns => {
+    const i = ns.findIndex(x => x.aId === n.aId);
+    if (i >= 0) { const c = [...ns]; c[i] = n; return c; }
+    return [...ns, {id:'n'+Date.now(), ...n}];
+  });
+
+  const path = hash.replace('#','') || '/';
+  const parts = path.split('/').filter(Boolean);
   let page;
-  if(parts.length===0||path==='/')page=<Dashboard appts={appts}/>;
-  else if(parts[0]==='clients'&&!parts[1])page=<ClientList extra={extra}/>;
-  else if(parts[0]==='clients'&&parts[1]&&!parts[2])page=<ECPPage cId={parts[1]} appts={appts}/>;
-  else if(parts[0]==='clients'&&parts[2]==='res')page=<RESPage cId={parts[1]}/>;
-  else if(parts[0]==='clients'&&parts[2]==='acc')page=<ACCPage cId={parts[1]}/>;
-  else if(parts[0]==='intake')page=<ICPSIntake onNew={c=>setExtra(p=>[...p,c])}/>;
-  else if(parts[0]==='appointments'&&!parts[1])page=<ApptsPage appts={appts}/>;
-  else if(parts[0]==='appointments'&&parts[2]==='notes')page=<NotesPage aId={parts[1]} appts={appts} allNotes={notes} onSave={saveNote}/>;
-  else if(parts[0]==='ssep')page=<SSEPPage appts={appts}/>;
-  else page=<div className="p-8 text-slate-500">Page not found. <a href="#/" className="text-indigo-600 hover:underline">Go home →</a></div>;
-  return <div className="flex min-h-screen bg-slate-50">
-    <Sidebar hash={hash}/>
-    <main className="flex-1 overflow-y-auto" style={{marginLeft:256}}>{page}</main>
-  </div>;
+  if (parts.length === 0 || path === '/')                          page = <Dashboard appts={appts}/>;
+  else if (parts[0]==='clients' && !parts[1])                      page = <ClientList extra={extra}/>;
+  else if (parts[0]==='clients' && parts[1] && !parts[2])         page = <ECPPage cId={parts[1]} appts={appts}/>;
+  else if (parts[0]==='clients' && parts[2]==='res')               page = <RESPage cId={parts[1]}/>;
+  else if (parts[0]==='clients' && parts[2]==='acc')               page = <ACCPage cId={parts[1]}/>;
+  else if (parts[0]==='intake')                                    page = <ICPSIntake onNew={c=>setExtra(p=>[...p,c])}/>;
+  else if (parts[0]==='appointments' && !parts[1])                 page = <ApptsPage appts={appts}/>;
+  else if (parts[0]==='appointments' && parts[2]==='notes')        page = <NotesPage aId={parts[1]} appts={appts} allNotes={notes} onSave={saveNote}/>;
+  else if (parts[0]==='ssep')                                      page = <SSEPPage appts={appts}/>;
+  else page = <div style={{padding:36,color:'var(--text-muted)'}}>Page not found. <a href="#/" style={{color:'var(--text-link)'}}>Go home →</a></div>;
+
+  return (
+    <div style={{display:'flex',minHeight:'100vh',background:'var(--bg)'}}>
+      <Sidebar hash={hash}/>
+      <main style={{flex:1,overflowY:'auto',marginLeft:240}}>{page}</main>
+    </div>
+  );
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
