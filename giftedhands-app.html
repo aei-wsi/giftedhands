@@ -451,10 +451,10 @@ const Dashboard = ({appts}) => {
   const highPending = appts.filter(a => gc(a.cId)?.risk === 'High' && a.status === 'Pending');
 
   const stats = [
-    {l:"Today's Appointments", v:total},
-    {l:'Checked In / Active',  v:active},
-    {l:'Completed',            v:done},
-    {l:'Pending',              v:pending},
+    {l:"Today's Appointments", v:total, accent:false},
+    {l:'Checked In / Active',  v:active, accent:false},
+    {l:'Completed',            v:done, accent:false},
+    {l:'Pending',              v:pending, accent:false},
   ];
 
   return (
@@ -889,6 +889,7 @@ const ICPSIntake = ({onNew}) => {
               <div className={`step-dot ${i+1 < step ? 'done' : i+1 === step ? 'current' : 'todo'}`}>
                 {i+1 < step ? '✓' : i+1}
               </div>
+              <span className="step-label" style={{color: i+1 === step ? 'var(--accent)' : 'var(--text-faint)',display:'none'}}>{s}</span>
             </div>
             {i < steps.length-1 && <div className={`step-line ${i+1 < step ? 'done' : 'todo'}`} style={{margin:'0 6px',flexShrink:0,width:32}}></div>}
           </React.Fragment>
